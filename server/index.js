@@ -9,11 +9,15 @@ exports.start = function(PORT, STATIC_DIR, DATA_FILE, TEST_DIR) {
 
   var users_online = new Array();
 
-  // This loads index.html
-  app.use(express.static(STATIC_DIR));
-  app.use(express.bodyParser());
+  app.use('/static',express.static(STATIC_DIR));
+  //app.use(express.bodyParser());
   
   server.listen(PORT);
+
+  app.get('/', function (req, res) {
+    res.sendfile('/Users/cj/Projects/whisperchirp/app/views/404.html');
+  });
+
   app.get('/:chatroom', function (req, res) {
     res.sendfile('/Users/cj/Projects/whisperchirp/app/index.html');
   });
@@ -34,7 +38,6 @@ exports.start = function(PORT, STATIC_DIR, DATA_FILE, TEST_DIR) {
         }
       };
       socket.emit('console log', "Users Online: " + users_online.length);
-      socket.emit('console log', users_online);
 
     });
 
@@ -54,6 +57,31 @@ exports.start = function(PORT, STATIC_DIR, DATA_FILE, TEST_DIR) {
           io.sockets.socket(users_online[i]["id"]).emit('new message',data);
         }
       };
+    });
+
+    /*
+    Request the chat data for the chatroom from the oldest user in the room
+    */
+    socket.on('request chat history', function (data) {
+      var chatroom = data["chatroom"];
+      var history;
+      for (var i = 0; i < users_online.length; i++) {
+        if(users_online[i]["chatroom"] == chatroom) {
+          io.sockets.socket(users_online[i]["id"]).emit("provide chat history",{id: socket.id});
+          break;
+        }
+      };
+    });
+
+    socket.on('provide chat history', function (data) {
+      var id = data["id"];
+      var history = data["history"];
+
+      io.sockets.socket(id).emit("import chat history",{history: history});
+    });
+
+    socket.on('import chat history', function (data) {
+      io.sockets.socket(data["id"]).emit("set chat history",{history: data["history"]});
     });
 
   });
