@@ -1,17 +1,51 @@
-<div class="row-fluid">
-  <div class="span3 fm-panel">
-    <h4>Filter Restaurants</h4>
-    <form>
-      <h5>Rating</h5>
-      <fm-rating ng-model="$parent.filter.rating"></fm-rating>
-      <h5>Price</h5>
-      <fm-rating ng-model="$parent.filter.price" symbol="$"></fm-rating>
-      <h5>Cuisine</h5>
-      <div fm-checkbox-list ng-model="filter.cuisine">
-        <label ng-repeat="(name, title) in CUISINE_OPTIONS" class="checkbox">
-          <input type="checkbox" value="{{name}}"> {{title}}
-        </label>
-      </div>
-    </form>
+<style>
+  .chat-box { position: fixed; left: 0px; bottom: 0px; width: 100%; }
+    .chat-box input { width: 98%; padding: 0 1%; }
+  .pad { padding: 0 20px; }
+</style>
+<div id="chat-room">
+  <div>
+    <div class="welcome-message chat-message">
+    Welcome to whisper chirp
+    </div>
   </div>
 </div>
+<div class="chat-box">
+  <form class="pad">
+    <input id="chat-box" type="text"/>
+  </form>
+</div>
+<script>
+$(document).ready(function(){
+  var socket = io.connect('http://localhost');
+  var chatroom = window.location.pathname.split('/').pop();
+  var username = "Creeper"
+  var c = prompt("Please enter your name");
+  if(c != null && c.length > 0) username = c;
+
+  // Connect to the chatroom
+  socket.emit('connect',{chatroom: chatroom,username: username });
+
+  socket.on('console log', function (data) {
+    console.dir(data);
+  });
+
+  $("#chat-box").keypress(function(event){
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        socket.emit('new message',{chatroom: chatroom, username: username, message: $("#chat-box").val() });
+      }
+  });
+
+  socket.on('new message', function (data) {
+    var message = data["message"];
+    var username = data["username"];
+    $('#chat-room').append("<div class='chat-message'><b>"+username+"</b>: "+message+"</div>");
+  });
+
+  window.onbeforeunload = function() {
+    socket.onclose = function () {}; // disable onclose handler first
+    socket.close();
+  };
+});
+</script>
