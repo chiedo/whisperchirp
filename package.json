@@ -20,7 +20,8 @@
     "express": ">= 3.0.0",
     "csv": ">= 0.2.1",
     "open": ">= 0.0.2",
-    "testacular": "canary"
+    "testacular": "canary",
+    "jade": "*"
   },
   "engines": {
     "node": ">= 0.8.4"

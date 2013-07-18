@@ -9,17 +9,24 @@ exports.start = function(PORT, STATIC_DIR, DATA_FILE, TEST_DIR) {
 
   var users_online = new Array();
 
+  app.set('views', '/Users/cj/Projects/whisperchirp/app/views');
+  app.set('view engine', 'jade');
+  //app.use(express.logger('dev'));
+
   app.use('/static',express.static(STATIC_DIR));
   //app.use(express.bodyParser());
   
   server.listen(PORT);
 
   app.get('/', function (req, res) {
-    res.sendfile('/Users/cj/Projects/whisperchirp/app/views/404.html');
+    //res.sendfile('/Users/cj/Projects/whisperchirp/app/views/404.html');
+    res.render('home-index',
+      { title : 'Home' }
+    );
   });
 
   app.get('/:chatroom', function (req, res) {
-    res.sendfile('/Users/cj/Projects/whisperchirp/app/index.html');
+    res.sendfile('/Users/cj/Projects/whisperchirp/app/views/chatroom-index.html');
   });
 
   io.sockets.on('connection', function (socket) {
