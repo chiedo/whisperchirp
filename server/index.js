@@ -13,8 +13,8 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
   app.set('view engine', 'jade');
   //app.use(express.logger('dev'));
 
+  //this sets the static path to provide all static files
   app.use('/static',express.static(STATIC_DIR));
-  //app.use(express.bodyParser());
   
   server.listen(PORT);
 

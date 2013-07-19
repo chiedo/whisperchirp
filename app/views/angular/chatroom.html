@@ -1,3 +1,4 @@
+    Hey <span class="display-username"></span> - <span id="change-username">change username</span>
 <div id="chat-room">
   <div>
     <div class="welcome-message chat-message">
@@ -10,54 +11,4 @@
     <input id="chat-box" type="text"/>
   </form>
 </div>
-<script>
-$(document).ready(function(){
-  var socket = io.connect('http://localhost');
-  var chatroom = window.location.pathname.split('/').pop();
-  var username = "Guest"
-  var c = prompt("Please enter your name");
-  if(c != null && c.length > 0) username = c + " (Guest)";
-
-  // Connect to the chatroom
-  socket.emit('connect',{chatroom: chatroom,username: username });
-  socket.emit('request chat history',{chatroom: chatroom});
-
-  socket.on('console log', function (data) {
-    console.dir(data);
-  });
-
-  $("#chat-box").keypress(function(event){
-    var keycode = (event.keyCode ? event.keyCode : event.which);
-      if(keycode == '13'){
-        socket.emit('new message',{chatroom: chatroom, username: username, message: $("#chat-box").val() });
-        $(this).val("");
-      }
-  });
-
-  socket.on('new message', function (data) {
-    var message = data["message"];
-    var username = data["username"];
-    $('#chat-room').append("<div class='chat-message'><b>"+username+"</b>: "+message+"</div>");
-  });
-
-  socket.on('provide chat history', function (data) {
-    var id = data["id"];
-    var history = $('#chat-room').html();
-    socket.emit('import chat history',{id: id, history: history});
-  });
-
-  socket.on('import chat history', function (data) {
-    socket.emit("import chat history");
-  });
-
-  socket.on('set chat history', function (data) {
-    var history = data["history"];
-    $('#chat-room').html(history);
-  });
-
-  window.onbeforeunload = function() {
-    socket.onclose = function () {}; // disable onclose handler first
-    socket.close();
-  };
-});
-</script>
+<script src="/static/js/chatroom.js"></script>
