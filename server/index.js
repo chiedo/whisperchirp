@@ -25,7 +25,15 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
   });
 
   app.get('/:chatroom', function (req, res) {
-    res.sendfile('/Users/cj/Projects/whisperchirp/app/views/angular/index.html');
+    res.render('angular/index',
+      { title : 'Chatroom' }
+    );
+  });
+
+  app.get('*', function (req, res) {
+    res.render('home/404',
+      { title : '404' }
+    );
   });
 
   io.sockets.on('connection', function (socket) {
