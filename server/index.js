@@ -2,14 +2,14 @@ var express = require('express');
 var fs = require('fs');
 var open = require('open');
 
-exports.start = function(PORT, STATIC_DIR, DATA_FILE, TEST_DIR) {
+exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
   var app = express();
   var server = require('http').createServer(app);
   var io = require('socket.io').listen(server);
 
   var users_online = new Array();
 
-  app.set('views', '/Users/cj/Projects/whisperchirp/app/views');
+  app.set('views', STATIC_DIR + '/views');
   app.set('view engine', 'jade');
   //app.use(express.logger('dev'));
 
@@ -19,7 +19,6 @@ exports.start = function(PORT, STATIC_DIR, DATA_FILE, TEST_DIR) {
   server.listen(PORT);
 
   app.get('/', function (req, res) {
-    //res.sendfile('/Users/cj/Projects/whisperchirp/app/views/404.html');
     res.render('home/index',
       { title : 'Home' }
     );
