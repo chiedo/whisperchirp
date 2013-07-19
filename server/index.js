@@ -20,13 +20,13 @@ exports.start = function(PORT, STATIC_DIR, DATA_FILE, TEST_DIR) {
 
   app.get('/', function (req, res) {
     //res.sendfile('/Users/cj/Projects/whisperchirp/app/views/404.html');
-    res.render('home-index',
+    res.render('home/index',
       { title : 'Home' }
     );
   });
 
   app.get('/:chatroom', function (req, res) {
-    res.sendfile('/Users/cj/Projects/whisperchirp/app/views/chatroom-index.html');
+    res.sendfile('/Users/cj/Projects/whisperchirp/app/views/angular/index.html');
   });
 
   io.sockets.on('connection', function (socket) {

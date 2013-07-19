@@ -6,10 +6,10 @@ whisperChirpApp.config(function($routeProvider) {
   $routeProvider.
       when('/', {
         controller: 'ChatRoomController',
-        templateUrl: 'static/views/chatroom.html'
+        templateUrl: 'static/views/angular/chatroom.html'
       }).
       otherwise({
         controller: 'ChatRoomController',
-        templateUrl: 'static/views/404.html'
+        templateUrl: 'static/views/home/404.html'
       });
 });
