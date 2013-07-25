@@ -77,6 +77,31 @@ var wc = {
       (function($) {
         $('#dynamic-style').append(".u"+x+" .chat-message-picture img { border-color: "+y+"; }");
       })(jQuery);
+    },
+    newUser: function(id) {
+      (function($) {
+        users_online.push(id);
+        if(chat_colors.length > 0) {
+          wc.setUserColors(id,chat_colors[0]);
+          chat_colors.splice(0,1);
+        }
+        else {
+          wc.setUserColors(id,wc.randomHex());
+        }
+      })(jQuery);
+    },
+    changeName: function() {
+      (function($) {
+        username = prompt("Please enter your name (15 characters or less):"); 
+        username = jQuery.trim(username).substring(0,15);
+        if(username === null || typeof username === "undefined" || username === "") { 
+          username = "Guest";
+        }
+        wc.setCookie(chatroom+"&username",username,365);
+        $(".u"+user_id+" .chat-username").text(username);
+
+        socket.emit('name change',{username: username});
+      })(jQuery);
     }
 
 };

@@ -45,7 +45,6 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       var username = data["username"]; 
       var user_id = data["user_id"]; 
       var username = data["username"]; 
-
       users_online.push({ socket_id: socket.id, chatroom: chatroom, user_id: user_id, username: username  });
 
       for (var i = 0; i < users_online.length; i++) {
@@ -53,8 +52,6 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
           io.sockets.socket(users_online[i]["socket_id"]).emit('console log',username + " is online");
         }
       };
-      socket.emit('console log', "Users Online: " + users_online.length);
-      socket.broadcast.emit('new user online', data);
 
     });
 
@@ -101,15 +98,25 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       var user_id = data["user_id"];
       var chatroom = data["chatroom"];
       var history = data["history"];
-      
       io.sockets.socket(getSocketId(chatroom,user_id)).emit("import chat history",{user_id: user_id, chatroom: chatroom,history: history});
+    });
+
+    socket.on('name change', function (data) {
+      var username = data["username"];
+      var socket_data = getSocketData(socket.id);
+      socket_data["username"] = username;
+      setSocketUsername(socket.id, username);
+
+      socket.broadcast.emit("reflect name change",socket_data);
+      socket.emit("reflect name change",socket_data);
     });
 
     socket.on('import chat history', function (data) {
       var user_id = data["user_id"];
       var chatroom = data["chatroom"];
-
+      console.dir("DATA: " + data);
       io.sockets.socket(getSocketId(chatroom,user_id)).emit("set chat history",{history: data["history"]});
+
     });
 
   });
@@ -119,12 +126,23 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       if(users_online[i]["chatroom"] == chatroom && users_online[i]["user_id"] == user_id)
         return users_online[i]["socket_id"];
     };
+
+    return null;
   }
 
   function getSocketData(socket_id) {
     for (var i = 0; i < users_online.length; i++) {
-      if(users_online[i]["socket_id"] == socket_id)
+      if(users_online[i]["socket_id"] === socket_id)
         return { chatroom: users_online[i]["chatroom"], user_id: users_online[i]["user_id"]};
+    };
+
+    console.log("There are no users fitting that criteria, Socket Id: " + socket_id);
+    return {};
+  }
+
+  function setSocketUsername(socket_id,username) {
+    for (var i = 0; i < users_online.length; i++) {
+      if(users_online[i]["socket_id"] == socket_id) users_online[i]["username"] = username;
     };
   }
 

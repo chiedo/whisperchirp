@@ -18,21 +18,22 @@ else {
 
 //Setup style for coding messages for client
 users_online.push(user_id);
+$("#settings-pane").attr("userid",user_id);
+$("#settings-pane").addClass("u"+user_id);
 wc.setUserColors(user_id,"#1464a8");
 $('#dynamic-style').append(".u"+user_id+" .chat-username { color: #1464a8; }");
 
 // Set the username or prompt for it if its needed
-if(wc.getCookie("username") === null || typeof wc.getCookie("username") === "undefined" || wc.getCookie("username") === "Guest") {
-  username = prompt("Please enter your name:","Guest"); 
-  username = jQuery.trim(username);
-  wc.setCookie("username",username,365);
+if(wc.getCookie(chatroom+"&username") === null || typeof wc.getCookie(chatroom+"&username") === "undefined" || wc.getCookie(chatroom+"&username") === "Guest") {
+  wc.changeName();
 } else {
-  username = wc.getCookie("username");
+  username = wc.getCookie(chatroom+"&username");
 }
+$("#settings-pane .chat-username").text(username);
 
 // Connect to the chatroom
 socket.emit('connect',{chatroom: chatroom, username: username, user_id: user_id });
-socket.emit('request chat history',{});
+socket.emit('request chat history');
 
 socket.on('console log', function (data) {
   console.dir(data);
@@ -41,7 +42,7 @@ socket.on('console log', function (data) {
 socket.on('new user online', function (data) {
   var user_id = data["user_id"];
   if(users_online.indexOf(user_id) == -1) {
-    wc.new_user(user_id);
+    wc.newUser(user_id);
   }
 });
 
@@ -58,6 +59,10 @@ $("#chat-box").keypress(function(event){
       $(this).val("");
       wc.resetRange($(this));
     }
+});
+
+$("#change-name").click(function(){
+  wc.changeName();
 });
 
 socket.on('new message', function (data) {
@@ -98,16 +103,22 @@ socket.on('set chat history', function (data) {
   var history = data["history"];
   var user_id = data["user_id"];
   var chatroom = data["chatroom"];
-
+  
   $('#chat-messages').html(history);
   $("#chat-pane").scrollTop($("#chat-messages").height() * 2);
 
   // Sets the colors for the other users in the chatroom
   $(".chat-message-section").each(function(){
     if(users_online.indexOf($(this).attr("user_id")) == -1) {
-      wc.new_user($(this).attr("user_id"));
+      wc.newUser($(this).attr("user_id"));
     }
   });
+});
+
+socket.on('reflect name change', function (data) {
+  var user_id = data["user_id"];
+  var username = data["username"];
+  $(".u"+user_id+" .chat-username").text(username);
 });
 
 window.onbeforeunload = function() {
@@ -115,13 +126,3 @@ window.onbeforeunload = function() {
   socket.close();
 };
 
-wc.new_user = function(id) {
-    users_online.push(id);
-    if(chat_colors.length > 0) {
-      wc.setUserColors(id,chat_colors[0]);
-      chat_colors.splice(0,1);
-    }
-    else {
-      wc.setUserColors(id,wc.randomHex());
-    }
-};

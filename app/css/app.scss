@@ -1,3 +1,5 @@
+$color-1: #A9ABB0;
+
 body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-size: 13px; 
        background-color: #1464a8; margin:0; padding: 0;}
 .csec { width: 1024px; margin: 0 auto; }
@@ -40,6 +42,11 @@ body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-si
  */
 .hp-20 { padding-left:20px; padding-right: 20px; }
 .clear { clear: both }
+.small-text { font-size: 10px; }
+.clr-1 { color: $color-1; }
+
+/* Cursor Pointer */
+.change-name { cursor: hand; cursor: pointer; }
 
 /* Inline block */
 .chat-message-picture, .chat-message-text, .pane, .my-photo, .settings-name { display: inline-block; }
