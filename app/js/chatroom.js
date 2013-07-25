@@ -35,6 +35,7 @@ $("#settings-pane .chat-username").text(username);
 // Connect to the chatroom
 socket.emit('connect',{chatroom: chatroom, username: username, user_id: user_id });
 socket.emit('request chat history');
+socket.emit('get all users online',{chatroom: chatroom,user_id: user_id});
 
 socket.on('console log', function (data) {
   console.dir(data);
@@ -44,11 +45,12 @@ socket.on('new user online', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
   users_in_chatroom = data["users_in_chatroom"];
-
+ 
+  wc.newUser(user_id,username);
   console.dir(username + " is online");
   console.dir(users_in_chatroom+" users online.");
 
-  if(users_online.indexOf(user_id) == -1) wc.newUser(user_id);
+  if(users_online.indexOf(user_id) == -1) wc.newUser(user_id,username);
 });
 
 socket.on('user offline', function (data) {
@@ -56,8 +58,8 @@ socket.on('user offline', function (data) {
   var username = data["username"];
 
   users_in_chatroom--;
+  $("#users-online-pane .u"+user_id).remove();
   console.dir(username + " is offline");
-
   console.dir(users_in_chatroom+" users online.");
 });
 
@@ -121,18 +123,18 @@ socket.on('set chat history', function (data) {
   $('#chat-messages').html(history);
   $("#chat-pane").scrollTop($("#chat-messages").height() * 2);
 
-  // Sets the colors for the other users in the chatroom
-  $(".chat-message-section").each(function(){
-    if(users_online.indexOf($(this).attr("user_id")) == -1) {
-      wc.newUser($(this).attr("user_id"));
-    }
-  });
 });
 
 socket.on('reflect name change', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
   $(".u"+user_id+" .chat-username").text(username);
+});
+
+socket.on('set users online pane', function (data) {
+  for (var i = 0; i < data.length; i++) {
+    wc.newUser(data[i]["user_id"],data[i]["username"]);
+  }
 });
 
 window.onbeforeunload = function() {

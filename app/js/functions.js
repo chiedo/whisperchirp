@@ -76,17 +76,20 @@ var wc = {
     setUserColors: function(x,y) {
       (function($) {
         $('#dynamic-style').append(".u"+x+" .chat-message-picture img { border-color: "+y+"; }");
+        $('#dynamic-style').append(".users-online-pane .u"+x+" .chat-online-block { background-color: "+y+"; }");
       })(jQuery);
     },
-    newUser: function(id) {
+    newUser: function(user_id,username) {
       (function($) {
-        users_online.push(id);
+        users_online.push(user_id);
+        $("#users-online-pane").append("<div class='chat-user-online u"+user_id+"'><div class='chat-online-block'></div><div class='chat-username'>"+username +"</div></div>");
+
         if(chat_colors.length > 0) {
-          wc.setUserColors(id,chat_colors[0]);
+          wc.setUserColors(user_id,chat_colors[0]);
           chat_colors.splice(0,1);
         }
         else {
-          wc.setUserColors(id,wc.randomHex());
+          wc.setUserColors(user_id,wc.randomHex());
         }
       })(jQuery);
     },

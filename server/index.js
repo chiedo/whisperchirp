@@ -82,6 +82,19 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       socket.emit("new message", data);
     });
 
+    socket.on('get all users online', function (data) {
+      var chatroom = data["chatroom"].toLowerCase();
+      var user_id = data["user_id"];
+      var users_in_chatroom = new Array();
+
+      for (var i = 0; i < users_online.length; i++) {
+        if(users_online[i]["chatroom"] == chatroom) {
+          if(users_online[i]["user_id"] != user_id) users_in_chatroom.push({user_id: users_online[i]["user_id"],username: users_online[i]["username"]});
+        }
+      }
+      socket.emit("set users online pane", users_in_chatroom);
+    });
+
     /*
     Request the chat data for the chatroom from the oldest user in the room
     */
