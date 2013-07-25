@@ -7,11 +7,17 @@ body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-si
 .header { min-height: 50px; }
 
 /*
+ * Layout Panes
+ */
+.pane-1 { background-color: #ffffff; padding: 20px;  min-height: 100px; margin-right: 10px; }
+ .pane-3 {  }
+
+/*
  * Chat pane
  */
 .welcome { font-size: 11px; color: #A9ABB0; }
-#chat-messages { padding-top: 10px; width: 450px; }
-.pane-3 { background-color: #ffffff; padding: 20px; width: 450px; height: 400px; overflow-y: scroll; }
+.chat-messages { padding-top: 10px; width: 450px; }
+.chat-pane { background-color: #ffffff; padding: 20px; width: 450px; height: 400px; overflow-y: scroll; }
 
 .chat-message-section { margin-bottom: 10px; }
 .chat-message-picture { width: 32px; padding-right: 10px; }
@@ -23,20 +29,27 @@ body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-si
   .chat-box { width: 470px; border: 0; height: 30px; padding: 10px; }
 
 /*
+ * Settings Pane
+ */
+ .settings-pane { width: 200px;}
+  .my-photo { margin-right: 10px; width: 74px; }
+  .settings-name { width: 100px; }
+
+/*
  * General
  */
 .hp-20 { padding-left:20px; padding-right: 20px; }
 .clear { clear: both }
 
 /* Inline block */
-.chat-message-picture, .chat-message-text { display: inline-block; }
+.chat-message-picture, .chat-message-text, .pane, .my-photo, .settings-name { display: inline-block; }
 
 /* Vertical Align top */
-.chat-message-picture, .chat-message-text { vertical-align: top; }
+.chat-message-picture, .chat-message-text, .pane, .settings-name { vertical-align: top; }
 
 /*
  * IE7
  */
 .ie7 {
-  .chat-message-picture, .chat-message-text { display: inline; }
+.chat-message-picture, .chat-message-text, .pane, .my-photo, .settings-pane { display: inline;}
 }

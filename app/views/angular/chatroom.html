@@ -3,17 +3,23 @@
 <header id="header" class="header">
 </header>
 <div class="csec">
-  <div id="chat-pane" class="pane-3">
-    <div class="welcome">Welcome to whisper chirp</div>
-    <div id="chat-messages">
-      <div>
-      </div>
-    </div><!--chat-room -->
+  <div class="pane-1 pane">
+    <div class="settings-pane">
+      <img class="my-photo" src='/static/img/no-user-photo.gif' />  
+      <div class="settings-name">Chiedo John</div>
+    </div>
+  </div>
+  <div class="pane-3 pane">
+    <div id="chat-pane" class="chat-pane">
+      <div class="welcome">Welcome to whisper chirp</div>
+      <div id="chat-messages" class="chat-messages">
+      </div><!--chat-room -->
+    </div><!-- chat-pane -->
+    <div class="chat-box-container">
+      <form>
+        <input id="chat-box" class="chat-box" type="text" autocomplete="off" placeholder="Write a reply..."/>
+      </form>
+    </div><!-- chat-box -->
   </div><!-- pane-3 -->
-  <div class="chat-box-container">
-    <form>
-      <input id="chat-box" class="chat-box" type="text" autocomplete="off" placeholder="Write a reply..."/>
-    </form>
-  </div><!-- chat-box -->
 </div>
 <script src="/static/js/chatroom.js"></script>

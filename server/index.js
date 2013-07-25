@@ -44,12 +44,13 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       var chatroom = data["chatroom"]; 
       var username = data["username"]; 
       var user_id = data["user_id"]; 
+      var username = data["username"]; 
 
-      users_online.push({ id: socket.id, chatroom: chatroom });
+      users_online.push({ socket_id: socket.id, chatroom: chatroom, user_id: user_id, username: username  });
 
       for (var i = 0; i < users_online.length; i++) {
         if(users_online[i]["chatroom"] == chatroom && users_online[i]["id"] != socket.id) {
-          io.sockets.socket(users_online[i]["id"]).emit('console log',username + " is online");
+          io.sockets.socket(users_online[i]["socket_id"]).emit('console log',username + " is online");
         }
       };
       socket.emit('console log', "Users Online: " + users_online.length);
@@ -59,7 +60,10 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
 
     socket.on('disconnect', function () {
       for (var i = 0; i < users_online.length; i++) {
-        if(users_online[i]["id"] == socket.id) users_online.splice(i, 1);
+        if(users_online[i]["socket_id"] == socket.id) { 
+          socket.broadcast.emit('user offline', {user_id: users_online[i]["user_id"]} );
+          users_online.splice(i, 1);
+        }
       };
     });
 
@@ -71,7 +75,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       data["timestamp"] = new Date();
       for (var i = 0; i < users_online.length; i++) {
         if(users_online[i]["chatroom"] == chatroom) {
-          io.sockets.socket(users_online[i]["id"]).emit('new message',data);
+          io.sockets.socket(users_online[i]["socket_id"]).emit('new message',data);
         }
       };
     });
@@ -80,28 +84,49 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     Request the chat data for the chatroom from the oldest user in the room
     */
     socket.on('request chat history', function (data) {
-      var chatroom = data["chatroom"];
-      var history;
+      var socket_id = socket.id;
+      var socket_data = getSocketData(socket_id);
+      var user_id = socket_data["user_id"];
+      var chatroom = socket_data["chatroom"];
+
       for (var i = 0; i < users_online.length; i++) {
         if(users_online[i]["chatroom"] == chatroom) {
-          io.sockets.socket(users_online[i]["id"]).emit("provide chat history",{id: socket.id});
+          io.sockets.socket(users_online[i]["socket_id"]).emit("provide chat history",{user_id: user_id, chatroom: chatroom});
           break;
         }
       };
     });
 
     socket.on('provide chat history', function (data) {
-      var id = data["id"];
+      var user_id = data["user_id"];
+      var chatroom = data["chatroom"];
       var history = data["history"];
-
-      io.sockets.socket(id).emit("import chat history",{history: history});
+      
+      io.sockets.socket(getSocketId(chatroom,user_id)).emit("import chat history",{user_id: user_id, chatroom: chatroom,history: history});
     });
 
     socket.on('import chat history', function (data) {
-      io.sockets.socket(data["id"]).emit("set chat history",{history: data["history"]});
+      var user_id = data["user_id"];
+      var chatroom = data["chatroom"];
+
+      io.sockets.socket(getSocketId(chatroom,user_id)).emit("set chat history",{history: data["history"]});
     });
 
   });
+
+  function getSocketId(chatroom,user_id) {
+    for (var i = 0; i < users_online.length; i++) {
+      if(users_online[i]["chatroom"] == chatroom && users_online[i]["user_id"] == user_id)
+        return users_online[i]["socket_id"];
+    };
+  }
+
+  function getSocketData(socket_id) {
+    for (var i = 0; i < users_online.length; i++) {
+      if(users_online[i]["socket_id"] == socket_id)
+        return { chatroom: users_online[i]["chatroom"], user_id: users_online[i]["user_id"]};
+    };
+  }
 
 
 };
