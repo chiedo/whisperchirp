@@ -43,6 +43,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     socket.on('connect', function (data) {
       var chatroom = data["chatroom"]; 
       var username = data["username"]; 
+      var user_id = data["user_id"]; 
 
       users_online.push({ id: socket.id, chatroom: chatroom });
 
@@ -52,6 +53,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
         }
       };
       socket.emit('console log', "Users Online: " + users_online.length);
+      socket.broadcast.emit('new user online', data);
 
     });
 
@@ -66,6 +68,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     */
     socket.on('new message', function (data) {
       var chatroom = data["chatroom"];
+      data["timestamp"] = new Date();
       for (var i = 0; i < users_online.length; i++) {
         if(users_online[i]["chatroom"] == chatroom) {
           io.sockets.socket(users_online[i]["id"]).emit('new message',data);
