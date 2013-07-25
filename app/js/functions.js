@@ -105,6 +105,11 @@ var wc = {
 
         socket.emit('name change',{username: username});
       })(jQuery);
+    },
+    updateUsersInChatroom: function(x) {
+      (function($) {
+        $(".users-in-chatroom").text(x);
+      })(jQuery);
     }
 
 };

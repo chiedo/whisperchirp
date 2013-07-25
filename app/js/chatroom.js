@@ -45,6 +45,7 @@ socket.on('new user online', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
   users_in_chatroom = data["users_in_chatroom"];
+  wc.updateUsersInChatroom(users_in_chatroom);
  
   wc.newUser(user_id,username);
   console.dir(username + " is online");
@@ -58,6 +59,7 @@ socket.on('user offline', function (data) {
   var username = data["username"];
 
   users_in_chatroom--;
+  wc.updateUsersInChatroom(users_in_chatroom);
   $("#users-online-pane .u"+user_id).remove();
   console.dir(username + " is offline");
   console.dir(users_in_chatroom+" users online.");
@@ -133,8 +135,10 @@ socket.on('reflect name change', function (data) {
 
 socket.on('set users online pane', function (data) {
   for (var i = 0; i < data.length; i++) {
+    users_in_chatroom++;
     wc.newUser(data[i]["user_id"],data[i]["username"]);
   }
+  wc.updateUsersInChatroom(users_in_chatroom);
 });
 
 window.onbeforeunload = function() {
