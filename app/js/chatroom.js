@@ -1,5 +1,5 @@
 var socket = io.connect('http://localhost');
-var chatroom = window.location.pathname.split('/').pop();
+var chatroom = window.location.pathname.split('/').pop().toLowerCase();
 var username;
 var user_id;
 
@@ -41,9 +41,13 @@ socket.on('console log', function (data) {
 
 socket.on('new user online', function (data) {
   var user_id = data["user_id"];
+  var username = data["username"];
+
   if(users_online.indexOf(user_id) == -1) {
     wc.newUser(user_id);
   }
+
+  console.dir(username+" is online");
 });
 
 socket.on('user offline', function (data) {
