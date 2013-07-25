@@ -4,6 +4,7 @@ var username;
 var user_id;
 
 var users_online = new Array();
+var users_in_chatroom = 0;
 var chat_colors = new Array("#cc2a36","#00a0b0","#eb6841","#67204e","#4f372d");
 
 
@@ -42,15 +43,22 @@ socket.on('console log', function (data) {
 socket.on('new user online', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
+  users_in_chatroom = data["users_in_chatroom"];
 
   console.dir(username + " is online");
+  console.dir(users_in_chatroom+" users online.");
 
   if(users_online.indexOf(user_id) == -1) wc.newUser(user_id);
 });
 
 socket.on('user offline', function (data) {
   var user_id = data["user_id"];
-  console.dir(user_id + " is offline");
+  var username = data["username"];
+
+  users_in_chatroom--;
+  console.dir(username + " is offline");
+
+  console.dir(users_in_chatroom+" users online.");
 });
 
 $("#chat-box").keypress(function(event){

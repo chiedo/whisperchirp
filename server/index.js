@@ -44,13 +44,16 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       var chatroom = data["chatroom"].toLowerCase(); 
       var username = data["username"]; 
       var user_id = data["user_id"]; 
+      var users_in_chatroom = 1;
 
       for (var i = 0; i < users_online.length; i++) {
-        if(users_online[i]["chatroom"] === chatroom && users_online[i]["user_id"] === user_id ) {
-          socket.emit("already in this room");
-          break;
+        if(users_online[i]["chatroom"] === chatroom) {
+          users_in_chatroom++;
+          if(users_online[i]["user_id"] === user_id ) socket.emit("already in this room");
         }
       }
+
+      data["users_in_chatroom"] = users_in_chatroom;
 
       users_online.push({ socket_id: socket.id, chatroom: chatroom, user_id: user_id, username: username  });
       sendToChatRoom(chatroom,socket.id,"new user online", data);
@@ -62,7 +65,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
 
       for (var i = 0; i < users_online.length; i++) {
         if(users_online[i]["socket_id"] == socket.id) { 
-          sendToChatRoom(chatroom,socket.id,"user offline", {user_id: users_online[i]["user_id"]});
+          sendToChatRoom(chatroom,socket.id,"user offline", {user_id: users_online[i]["user_id"], username: users_online[i]["username"]});
           users_online.splice(i, 1);
           break;
         }
