@@ -11,7 +11,7 @@ body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-si
 /*
  * Layout Panes
  */
-.pane-1 { background-color: #ffffff; padding: 20px;  min-height: 100px; margin-right: 10px; }
+.pane-1 { max-width: 250px; margin-right: 10px; }
  .pane-3 {  }
 
 /*
@@ -33,9 +33,14 @@ body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-si
 /*
  * Settings Pane
  */
- .settings-pane { width: 200px;}
+ .settings-pane { width: 200px; background-color: #ffffff; padding: 20px;  min-height: 100px; margin-bottom: 10px;}
   .my-photo { margin-right: 10px; width: 74px; }
   .settings-name { width: 100px; }
+
+/*
+ * Users online pane
+ */
+ .users-online-pane { width: 200px; background-color: #ffffff; padding: 20px;  height: 150px; margin-bottom: 10px; overflow-y: scroll;}
 
 /*
  * General

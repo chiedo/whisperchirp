@@ -45,13 +45,20 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       var username = data["username"]; 
       var user_id = data["user_id"]; 
 
+      for (var i = 0; i < users_online.length; i++) {
+        if(users_online[i]["chatroom"] === chatroom && users_online[i]["user_id"] === user_id ) {
+          socket.emit("already in this room");
+          break;
+        }
+      }
+
       users_online.push({ socket_id: socket.id, chatroom: chatroom, user_id: user_id, username: username  });
       sendToChatRoom(chatroom,socket.id,"new user online", data);
     });
 
     socket.on('disconnect', function () {
       var socket_data = getSocketData(socket.id);
-      var chatroom = socket_data["chatroom"].toLowerCase();
+      var chatroom = socket_data["chatroom"];
 
       for (var i = 0; i < users_online.length; i++) {
         if(users_online[i]["socket_id"] == socket.id) { 
@@ -99,7 +106,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     socket.on('name change', function (data) {
       var username = data["username"];
       var socket_data = getSocketData(socket.id);
-      var username = socket_data["username"];
+      var chatroom = socket_data["chatroom"];
       socket_data["username"] = username;
       setSocketUsername(socket.id, username);
 
@@ -111,7 +118,6 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       var user_id = data["user_id"];
       var chatroom = data["chatroom"].toLowerCase();
       io.sockets.socket(getSocketId(chatroom,user_id)).emit("set chat history",{history: data["history"]});
-
     });
 
   });
@@ -146,9 +152,6 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       if(users_online[i]["chatroom"] == chatroom && users_online[i]["socket_id"] != socket_id) {
         io.sockets.socket(users_online[i]["socket_id"]).emit(func,data);
       }
-    };
-
+    }
   }
-
-
 };

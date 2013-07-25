@@ -43,11 +43,9 @@ socket.on('new user online', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
 
-  if(users_online.indexOf(user_id) == -1) {
-    wc.newUser(user_id);
-  }
+  console.dir(username + " is online");
 
-  console.dir(username+" is online");
+  if(users_online.indexOf(user_id) == -1) wc.newUser(user_id);
 });
 
 socket.on('user offline', function (data) {
@@ -67,6 +65,10 @@ $("#chat-box").keypress(function(event){
 
 $("#change-name").click(function(){
   wc.changeName();
+});
+
+socket.on('already in this room', function (data) {
+  alert("You are in this room in another tab. Please close this window to avoid strange behavior.");
 });
 
 socket.on('new message', function (data) {
@@ -107,7 +109,7 @@ socket.on('set chat history', function (data) {
   var history = data["history"];
   var user_id = data["user_id"];
   var chatroom = data["chatroom"];
-  
+
   $('#chat-messages').html(history);
   $("#chat-pane").scrollTop($("#chat-messages").height() * 2);
 
