@@ -4,6 +4,7 @@ var username;
 var useremail;
 var userphoto = "http://www.gravatar.com/avatar/none";
 var user_id;
+var new_message_sound = new Audio("/static/mp3/new-message-sound.mp3");
 
 var users_online = new Array();
 var users_in_chatroom = 0;
@@ -114,6 +115,7 @@ socket.on('new message', function (data) {
   ");
 
   $("#chat-pane").scrollTop($("#chat-messages").height() * 2);
+  new_message_sound.play();
   
 });
 
