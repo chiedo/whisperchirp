@@ -103,7 +103,23 @@ var wc = {
         wc.setCookie(chatroom+"&username",username,365);
         $(".u"+user_id+" .chat-username").text(username);
 
-        socket.emit('name change',{username: username});
+        socket.emit('name change',{username: username, user_id: user_id, chatroom: chatroom});
+      })(jQuery);
+    },
+    changePhoto: function() {
+      (function($) {
+        useremail = prompt("Please enter your email address (gravatar account required)."); 
+        useremail = jQuery.trim(useremail);
+        userphoto = "http://www.gravatar.com/avatar/"+md5(useremail); 
+
+        wc.setCookie(chatroom+"&userphoto",userphoto,365);
+        wc.updateChatPhoto(userphoto,user_id);
+        socket.emit('send photo change',{userphoto: userphoto, user_id: user_id, chatroom: chatroom});
+      })(jQuery);
+    },
+    updateChatPhoto: function(path,user_id) {
+      (function($) {
+        $(".u"+user_id+" .chat-userphoto").attr("src",path);
       })(jQuery);
     },
     updateUsersInChatroom: function(x) {

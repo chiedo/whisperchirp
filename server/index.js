@@ -136,6 +136,13 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       io.sockets.socket(getSocketId(chatroom,user_id)).emit("set chat history",{history: data["history"]});
     });
 
+    socket.on('send photo change', function (data) {
+      var user_id = data["user_id"];
+      var chatroom = data["chatroom"].toLowerCase();
+
+      sendToChatRoom(chatroom,socket.id,"receive photo change", data);
+    });
+
   });
 
   function getSocketId(chatroom,user_id) {

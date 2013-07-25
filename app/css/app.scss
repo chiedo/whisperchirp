@@ -55,7 +55,7 @@ body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-si
 .clr-1 { color: $color-1; }
 
 /* Cursor Pointer */
-.change-name { cursor: hand; cursor: pointer; }
+.change-name, .change-photo { cursor: hand; cursor: pointer; }
 
 /* Inline block */
 .chat-message-picture, .chat-message-text, .pane, .my-photo, .settings-name, 

@@ -1,12 +1,13 @@
 var socket = io.connect('http://localhost');
 var chatroom = window.location.pathname.split('/').pop().toLowerCase();
 var username;
+var useremail;
+var userphoto = "http://www.gravatar.com/avatar/none";
 var user_id;
 
 var users_online = new Array();
 var users_in_chatroom = 0;
 var chat_colors = new Array("#cc2a36","#00a0b0","#eb6841","#67204e","#4f372d");
-
 
 // Check if the user has an id for this room. If so assign it otherwise create it.
 if(wc.getCookie(chatroom + "&user_id")) {
@@ -17,12 +18,17 @@ else {
   wc.setCookie(chatroom + "&user_id",user_id,30);
 }
 
+
 //Setup style for coding messages for client
 users_online.push(user_id);
 $("#settings-pane").attr("userid",user_id);
 $("#settings-pane").addClass("u"+user_id);
 wc.setUserColors(user_id,"#1464a8");
 $('#dynamic-style').append(".u"+user_id+" .chat-username { color: #1464a8; }");
+
+// Check if the user has a photo for this room. If so assign it otherwise create it.
+if(wc.getCookie(chatroom + "&userphoto")) userphoto = wc.getCookie(chatroom + "&userphoto");
+wc.updateChatPhoto(userphoto,user_id);
 
 // Set the username or prompt for it if its needed
 if(wc.getCookie(chatroom+"&username") === null || typeof wc.getCookie(chatroom+"&username") === "undefined" || wc.getCookie(chatroom+"&username") === "Guest") {
@@ -49,7 +55,7 @@ socket.on('new user online', function (data) {
  
   wc.newUser(user_id,username);
   console.dir(username + " is online");
-  console.dir(users_in_chatroom+" users online.");
+  console.dir(users_in_chatroom+" others online.");
 
   if(users_online.indexOf(user_id) == -1) wc.newUser(user_id,username);
 });
@@ -68,7 +74,7 @@ socket.on('user offline', function (data) {
 $("#chat-box").keypress(function(event){
   var keycode = (event.keyCode ? event.keyCode : event.which);
     if(keycode == '13'){
-      socket.emit('new message',{chatroom: chatroom, username: username,user_id:user_id, message: $("#chat-box").val() });
+      socket.emit('new message',{chatroom: chatroom, username: username,user_id:user_id, userphoto: userphoto, message: $("#chat-box").val() });
       $(this).focus();
       $(this).val("");
       wc.resetRange($(this));
@@ -79,6 +85,10 @@ $("#change-name").click(function(){
   wc.changeName();
 });
 
+$("#change-photo").click(function(){
+  wc.changePhoto();
+});
+
 socket.on('already in this room', function (data) {
   alert("You are in this room in another tab. Please close this window to avoid strange behavior.");
 });
@@ -86,13 +96,14 @@ socket.on('already in this room', function (data) {
 socket.on('new message', function (data) {
   var message = data["message"];
   var username = data["username"];
+  var userphoto = data["userphoto"];
   var user_id = data["user_id"];
   var timestamp = data["timestamp"];
 
   $('#chat-messages').append("\
     <div class='chat-message-section u"+user_id+"' user_id='"+user_id+"' timestamp='"+timestamp+"'>\
       <div class='chat-message-picture'>\
-        <img src='/static/img/no-user-photo.gif' />\
+        <img class='chat-userphoto' src='"+userphoto+"' />\
       </div>\
       <div class='chat-message-text'>\
         <div class='chat-username'>"+username+"</div>\
@@ -131,6 +142,14 @@ socket.on('reflect name change', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
   $(".u"+user_id+" .chat-username").text(username);
+});
+
+socket.on('receive photo change', function (data) {
+  var userphoto = data["userphoto"];
+
+  $(".u"+user_id+" .chat-userphoto").attr("src",userphoto);
+  console.dir("good!");
+
 });
 
 socket.on('set users online pane', function (data) {
