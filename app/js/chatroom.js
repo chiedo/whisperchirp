@@ -148,10 +148,9 @@ socket.on('reflect name change', function (data) {
 
 socket.on('receive photo change', function (data) {
   var userphoto = data["userphoto"];
+  var user_id = data["user_id"];
 
   $(".u"+user_id+" .chat-userphoto").attr("src",userphoto);
-  console.dir("good!");
-
 });
 
 socket.on('set users online pane', function (data) {

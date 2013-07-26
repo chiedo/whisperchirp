@@ -96,7 +96,12 @@ var wc = {
     changeName: function() {
       (function($) {
         username = prompt("Please enter your name (15 characters or less):"); 
-        username = jQuery.trim(username).substring(0,15);
+        if(username === null || typeof username === "undefined") { 
+          username = wc.getCookie(chatroom+"&username");
+        } 
+        else {
+          username = jQuery.trim(username).substring(0,15);
+        }
         if(username === null || typeof username === "undefined" || username === "") { 
           username = "Guest";
         }
