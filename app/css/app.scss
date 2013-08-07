@@ -1,7 +1,6 @@
 $color-1: #A9ABB0;
 
-body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-size: 13px; 
-       background-color: #1464a8; margin:0; padding: 0;}
+body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-size: 13px; margin:20px 0; padding: 0;}
 .csec { width: 1024px; margin: 0 auto; }
 /*
  * Header
@@ -9,9 +8,14 @@ body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-si
 .header { min-height: 50px; }
 
 /*
+ * Footer
+ */
+ .footer { background-color: #00ACA0; width: 100%; min-height: 200px; position: fixed; bottom: 0; }
+
+/*
  * Layout Panes
  */
-.pane-1 { max-width: 250px; margin-right: 10px; }
+.pane-1 { max-width: 290px; margin-right: 10px; }
  .pane-3 {  }
 
 /*
@@ -48,7 +52,9 @@ body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-si
  * General
  */
 .hp-20 { padding-left:20px; padding-right: 20px; }
+.vp-20 { padding-top: 20px; padding-bottom: 20px; }
 .bm-10 { margin-bottom: 10px; }
+.bgc-1 { background-color: #00ACA0; }
 
 .clear { clear: both }
 .small-text { font-size: 10px; }
