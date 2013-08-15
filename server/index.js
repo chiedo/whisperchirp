@@ -5,7 +5,9 @@ var open = require('open');
 exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
   var app = express();
   var server = require('http').createServer(app);
+  var server2 = require('http').createServer(app);
   var io = require('socket.io').listen(server);
+  var webRTC = require('webrtc.io').listen(server2);
 
   var users_online = new Array();
 
@@ -17,6 +19,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
   app.use('/static',express.static(STATIC_DIR));
   
   server.listen(PORT);
+  server2.listen(4000);
 
   app.get('/', function (req, res) {
     res.render('home/index',
@@ -177,4 +180,30 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       }
     }
   }
+
+  webRTC.rtc.on('chat_msg', function(data, socket) {
+    var roomList = webRTC.rtc.rooms[data.room] || [];
+
+    for (var i = 0; i < roomList.length; i++) {
+      var socketId = roomList[i];
+
+      if (socketId !== socket.id) {
+        var soc = webRTC.rtc.getSocket(socketId);
+
+        if (soc) {
+          soc.send(JSON.stringify({
+            "eventName": "receive_chat_msg",
+            "data": {
+              "messages": data.messages,
+              "color": data.color
+            }
+          }), function(error) {
+            if (error) {
+              console.log(error);
+            }
+          });
+        }
+      }
+    }
+  });
 };
