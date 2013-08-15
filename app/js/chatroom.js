@@ -1,4 +1,5 @@
-var socket = io.connect('http://localhost');
+//var socket = io.connect('http://192.168.0.4');
+var socket = io.connect('http://134.126.86.39');
 var chatroom = window.location.pathname.split('/').pop().toLowerCase();
 var username;
 var useremail;
