@@ -21,10 +21,8 @@
     "csv": ">= 0.2.1",
     "open": ">= 0.0.2",
     "testacular": "canary",
-    "jade": "latest",
-    "webrtc.io" : "latest",
-    "webrtc.io-client": "latest",
-    "ws": "latest"
+    "jade": "*",
+    "webrtc.io" : "*"
   },
   "engines": {
     "node": ">= 0.8.4"
