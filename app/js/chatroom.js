@@ -1,5 +1,4 @@
-//var socket = io.connect('http://192.168.0.4');
-var socket = io.connect('http://192.168.0.100');
+var socket = io.connect("http://"+SERVER_ADDRESS);
 var chatroom = window.location.pathname.split('/').pop().toLowerCase();
 var username;
 var useremail;
@@ -222,33 +221,6 @@ function removeVideo(socketId) {
   }
 }
 
-function addToChat(msg, color) {
-  var messages = document.getElementById('messages');
-  msg = sanitize(msg);
-  if(color) {
-    msg = '<span style="color: ' + color + '; padding-left: 15px">' + msg + '</span>';
-  } else {
-    msg = '<strong style="padding-left: 15px">' + msg + '</strong>';
-  }
-  messages.innerHTML = messages.innerHTML + msg + '<br>';
-  messages.scrollTop = 10000;
-}
-
-function sanitize(msg) {
-  return msg.replace(/</g, '&lt;');
-}
-
-
-var websocketChat = {
-  send: function(message) {
-    rtc._socket.send(message);
-  },
-  recv: function(message) {
-    return message;
-  },
-  event: 'receive_chat_msg'
-};
-
 var dataChannelChat = {
   send: function(message) {
     for(var connection in rtc.dataChannels) {
@@ -270,9 +242,6 @@ function webrtcioInit() {
     }, function(stream) {
       document.getElementById('you').src = URL.createObjectURL(stream);
       document.getElementById('you').play();
-      //videos.push(document.getElementById('you'));
-      //rtc.attachStream(stream, 'you');
-      //subdivideVideos();
     });
   } else {
     alert('Your browser is not supported or you have to turn on flags. In chrome you go to chrome://flags and turn on Enable PeerConnection remember to restart chrome');
@@ -281,12 +250,13 @@ function webrtcioInit() {
 
   var room = window.location.hash.slice(1);
 
-  rtc.connect("ws://192.168.0.100:4000", chatroom);
+  rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
 
   rtc.on('add remote stream', function(stream, socketId) {
     console.log("ADDING REMOTE STREAM...");
     var clone = cloneVideo('you', socketId);
     document.getElementById(clone.id).setAttribute("class", "");
+    document.getElementById(clone.id).removeAttribute("muted");
     rtc.attachStream(stream, clone.id);
     subdivideVideos();
   });
