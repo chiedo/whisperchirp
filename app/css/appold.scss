@@ -1,0 +1,90 @@
+$color-1: #A9ABB0;
+
+body { font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; font-size: 13px; margin:20px 0; padding: 0;}
+.csec { width: 1024px; margin: 0 auto; }
+/*
+ * Header
+ */
+.header { min-height: 50px; }
+
+/*
+ * Footer
+ */
+ .footer { background-color: #00ACA0; width: 100%; min-height: 200px; position: fixed; bottom: 0; }
+
+/*
+ * Layout Panes
+ */
+.pane-1 { max-width: 290px; margin-right: 10px; }
+ .pane-3 {  }
+
+/*
+ * Chat pane
+ */
+.welcome { font-size: 11px; color: #A9ABB0; }
+.chat-messages { padding-top: 10px; width: 450px; }
+.chat-pane { background-color: #ffffff; padding: 20px; width: 450px; height: 400px; overflow-y: scroll; }
+
+.chat-message-section { margin-bottom: 10px; }
+.chat-message-picture { width: 32px; padding-right: 10px; }
+  .chat-message-picture img{ width: 32px; height:32px; border-bottom-width: 3px; border-bottom-style: solid; }
+.chat-message-text { width: 400px; }
+.chat-username { margin-bottom: 5px; font-weight: bold; }
+
+.chat-box-container { width: 490px; margin-top: 10px; }
+  .chat-box { width: 470px; border: 0; height: 30px; padding: 10px; }
+
+/*
+ * Settings Pane
+ */
+ .settings-pane { width: 200px; background-color: #ffffff; padding: 20px;  min-height: 100px; margin-bottom: 10px;}
+  .my-photo { margin-right: 10px; width: 74px; }
+  .settings-name { width: 100px; }
+
+/*
+ * Users online pane
+ */
+ .users-online-pane { width: 200px; background-color: #ffffff; padding: 20px;  height: 150px; margin-bottom: 10px; overflow-y: scroll;}
+ .chat-online-block { width: 10px; height: 10px; margin-right: 5px; }
+ .chat-user-online { margin-top: 5px; font-size: 10px; }
+
+/*
+ * General
+ */
+.hp-20 { padding-left:20px; padding-right: 20px; }
+.vp-20 { padding-top: 20px; padding-bottom: 20px; }
+.bm-10 { margin-bottom: 10px; }
+.bgc-1 { background-color: #00ACA0; }
+
+.clear { clear: both }
+.small-text { font-size: 10px; }
+.clr-1 { color: $color-1; }
+
+/* Cursor Pointer */
+.change-name, .change-photo { cursor: hand; cursor: pointer; }
+
+/* Inline block */
+.chat-message-picture, .chat-message-text, .pane, .my-photo, .settings-name, 
+.chat-user-online .chat-username, .chat-online-block
+{ display: inline-block; }
+
+/* Vertical Align top */
+.chat-message-picture, .chat-message-text, .pane, .settings-name, 
+.chat-user-online .chat-username
+{ vertical-align: top; }
+
+/*
+ * IE7
+ */
+.ie7 {
+  .chat-message-picture, .chat-message-text, .pane, .my-photo, .settings-name, 
+  .chat-user-online .chat-username ,.chat-online-block
+  { display: inline; }
+}
+
+
+
+/*
+ * WEB RTC IO
+ */
+

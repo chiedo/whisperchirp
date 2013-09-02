@@ -1,0 +1,80 @@
+@mixin pv($c) { padding-bottom: $c; padding-top: $c; }
+@mixin ph($c) { padding-left: $c; padding-right: $c; }
+@mixin pt($c) { padding-top: $c; }
+@mixin pb($c) { padding-bottom: $c; }
+@mixin pr($c) { padding-right: $c; }
+@mixin pl($c) { padding-left: $c; }
+
+@mixin mv($c) { margin-bottom: $c; margin-top: $c; }
+@mixin mh($c) { margin-left: $c; margin-right: $c; }
+@mixin mt($c) { margin-top: $c; }
+@mixin mb($c) { margin-bottom: $c; }
+@mixin mr($c) { margin-right: $c; }
+@mixin ml($c) { margin-left: $c; }
+
+@mixin bdr-rad($a) { border-radius: $a; -moz-border-radius: $a; -webkit-border-radius: $a; }
+@mixin box-shad($a) { box-shadow: $a; -moz-box-shadow: $a; -webkit-box-shadow: $a; }
+@mixin trans($a) { transform:$a; -ms-transform:$a;  -webkit-transform:$a; }
+
+//percentage widths
+@mixin set-per-w($prefix: null) {
+  @for $i from 1 through 20 {
+    $c: $i * 5;
+    $d: $c * 1%;
+    .#{$prefix}per-w-#{$c} { width: #{$d}; }
+  }
+}
+
+//Pixel widths
+@mixin set-w($prefix: null,$stop:500) {
+  @for $i from 1 through $stop/5 {
+    $c: $i * 5;
+    $d: $c * 1px;
+    .#{$prefix}w-#{$c} { width: #{$d}; }
+  }
+}
+
+//Pixel paddings and margins
+@mixin set-m-and-p($prefix: null, $stop: 50) {
+  // stop must be a multiple of 5
+  @for $i from 1 through $stop/5 {
+    $c: $i * 5;
+    $d: $c * 1px;
+    .#{$prefix}ph-#{$c} { @include ph($d); }
+    .#{$prefix}pv-#{$c} { @include pv($d); }
+    .#{$prefix}pl-#{$c} { @include pl($d); }
+    .#{$prefix}pr-#{$c} { @include pr($d); }
+    .#{$prefix}pt-#{$c} { @include pt($d); }
+    .#{$prefix}pb-#{$c} { @include pb($d); }
+
+    .#{$prefix}mh-#{$c} { @include mh($d); }
+    .#{$prefix}mv-#{$c} { @include mv($d); }
+    .#{$prefix}ml-#{$c} { @include ml($d); }
+    .#{$prefix}mr-#{$c} { @include mr($d); }
+    .#{$prefix}mt-#{$c} { @include mt($d); }
+    .#{$prefix}mb-#{$c} { @include mb($d); }
+  }
+}
+
+//Percentage paddings and margins
+@mixin set-per-m-and-p($prefix: null) {
+  // stop must be a multiple of 5
+  @for $i from 1 through 100 {
+    $c: $i * 1;
+    $d: $c * 1%;
+    .#{$prefix}per-ph-#{$c} { @include ph($d); }
+    .#{$prefix}per-pv-#{$c} { @include pv($d); }
+    .#{$prefix}per-pl-#{$c} { @include pl($d); }
+    .#{$prefix}per-pr-#{$c} { @include pr($d); }
+    .#{$prefix}per-pt-#{$c} { @include pt($d); }
+    .#{$prefix}per-pb-#{$c} { @include pb($d); }
+
+    .#{$prefix}per-mh-#{$c} { @include mh($d); }
+    .#{$prefix}per-mv-#{$c} { @include mv($d); }
+    .#{$prefix}per-ml-#{$c} { @include ml($d); }
+    .#{$prefix}per-mr-#{$c} { @include mr($d); }
+    .#{$prefix}per-mt-#{$c} { @include mt($d); }
+    .#{$prefix}per-mb-#{$c} { @include mb($d); }
+
+  }
+}

@@ -5,12 +5,17 @@ html(lang='en',ng-app='whisperChirpApp')
     title Whisper Chirp
     link(rel='stylesheet', href='static/css/app.css')
     script(src='/static/lib/webrtcio/webrtc.io.js')
-  body()
-    header(id='header', class='header csec')
-      div(class='vp-20')
-        img(src='/static/img/logo.png', width='250')
+  body
+    header(id='header', class='header-1')
+      div(class='sec-1 sec')
+        div
+          img(src='/static/img/logo.png', height='20') 
+          span(class='logotext')
+            span(class='fw-300') whisper
+            span(class='fw-400') Chirp
     ng-view
-    //footer(id='footer',class='footer')
+    footer(id='footer',class='footer')
+      div(class='sec-1')
     
     script(src='/static/js/vars.js')
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js')
@@ -21,4 +26,5 @@ html(lang='en',ng-app='whisperChirpApp')
     script(src='/static/js/angular/controllers/ChatRoom.js')
     script(src='/static/js/angular/services/ChatRoom.js')
     script(src='/socket.io/socket.io.js')
+    script(src='/static/js/footer.js')
     script(src='/static/js/functions.js')

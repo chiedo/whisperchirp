@@ -131,6 +131,25 @@ var wc = {
       (function($) {
         $(".users-in-chatroom").text(x);
       })(jQuery);
+    },
+    getIEVersion: function() {
+      return (function($) { //encapsulated
+        var agent = navigator.userAgent;
+        var reg = /MSIE\s?(\d+)(?:\.(\d+))?/i;
+        var matches = agent.match(reg);
+        if (matches !== null) {
+            return { major: matches[1], minor: matches[2] };
+        }
+        return { major: "-1", minor: "-1" };
+      })( jQuery ); // End scripts
+    },
+    autoVertPadding: function(x,container) {
+      (function($) { //encapsulated
+        $(x).each(function(){
+          var b = $(this).closest(container).height() - $(this).height();
+          $(this).css("padding-top", b/2);
+        });
+      })( jQuery ); // End scripts
     }
 
 };
