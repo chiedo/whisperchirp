@@ -177,32 +177,6 @@ window.onbeforeunload = function() {
 var videos = [];
 var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
 
-function getNumPerRow() {
-  var len = videos.length;
-  var biggest;
-
-  // Ensure length is even for better division.
-  if(len % 2 === 1) {
-    len++;
-  }
-
-  biggest = Math.ceil(Math.sqrt(len));
-  while(len % biggest !== 0) {
-    biggest++;
-  }
-  return biggest;
-}
-
-function setWH(video, i) {
-  var perRow = getNumPerRow();
-  var perColumn = Math.ceil(videos.length / perRow);
-  var width = Math.floor((window.innerWidth) / perRow);
-  var height = Math.floor((window.innerHeight - 190) / perColumn);
-  video.width = width;
-  video.height = height;
-  video.style.left = (i % perRow) * width + "px";
-  video.style.top = Math.floor(i / perRow) * height + "px";
-}
 
 function cloneVideo(domId, socketId) {
   var video = document.getElementById(domId);
@@ -221,47 +195,30 @@ function removeVideo(socketId) {
   }
 }
 
-var dataChannelChat = {
-  send: function(message) {
-    for(var connection in rtc.dataChannels) {
-      var channel = rtc.dataChannels[connection];
-      channel.send(message);
-    }
-  },
-  recv: function(channel, message) {
-    return JSON.parse(message).data;
-  },
-  event: 'data stream data'
-};
-
 function webrtcioInit() {
   if(PeerConnection) {
     rtc.createStream({
       "video": {"mandatory": {}, "optional": []},
       "audio": true
     }, function(stream) {
-      document.getElementById('you').src = URL.createObjectURL(stream);
-      document.getElementById('you').play();
+      $("#you").attr("src", URL.createObjectURL(stream));
+      $("#you").get(0).play();
     });
   } else {
     alert('Your browser is not supported or you have to turn on flags. In chrome you go to chrome://flags and turn on Enable PeerConnection remember to restart chrome');
   }
-
 
   var room = window.location.hash.slice(1);
 
   rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
 
   rtc.on('add remote stream', function(stream, socketId) {
-    console.log("ADDING REMOTE STREAM...");
-    var clone = cloneVideo('you', socketId);
-    document.getElementById(clone.id).setAttribute("class", "");
-    document.getElementById(clone.id).removeAttribute("muted");
-    rtc.attachStream(stream, clone.id);
-    subdivideVideos();
+    var new_video = cloneVideo('you', socketId);
+    $("#"+new_video.id).attr("class", "");
+    $(new_video.id).removeAttr("muted");
+    rtc.attachStream(stream, new_video.id);
   });
   rtc.on('disconnect stream', function(data) {
-    console.log('remove ' + data);
     removeVideo(data);
   });
 }

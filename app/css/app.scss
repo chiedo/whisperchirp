@@ -19,6 +19,11 @@ h1,h2,h3,h4,h5,h6,p { color: $color-1; margin:0; }
   .logotext { color: #ffffff; line-height: 20px; vertical-align: top; display: inline-block; }
 }
 
+.header-2 {
+  background-color: #000000; position: fixed; top: 0; left: 0; width: 100%;
+  .logotext { color: #ffffff; line-height: 20px; vertical-align: top; display: inline-block; }
+}
+
 /*
  * FOOTER
  */
@@ -38,6 +43,7 @@ h1,h2,h3,h4,h5,h6,p { color: $color-1; margin:0; }
 /*
  * CONTENT
  */
+ /* home */
 .content-1 {
   background-color: #01B5AA; 
   h1 { font-size: 70px; }
@@ -50,6 +56,17 @@ h1,h2,h3,h4,h5,h6,p { color: $color-1; margin:0; }
 
   .chatsearch input { width: 300px; @include bdr-rad(10px); height: 40px; line-height: 40px; font-size: 13px; 
     @include ph(10px); display: inline-block; border: 0; @include pv(0px); outline: 0; }
+}
+
+/* chatpage */
+.content-2 {
+  width: 100%;
+  .sec { padding-right: 350px; padding-top: 25px; }
+  .chat-sec { right: 0; top: 25px; position: fixed; height: 100%; width: 350px; border-left: solid #B9B9C8 1px; overflow-y: auto; }
+
+  .videos { 
+    text-align: center; 
+  }
 }
 
 /*
