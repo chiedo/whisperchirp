@@ -178,20 +178,30 @@ var videos = [];
 var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
 
 
-function cloneVideo(domId, socketId) {
-  var video = document.getElementById(domId);
-  var clone = video.cloneNode(false);
-  clone.id = "remote" + socketId;
-  document.getElementById('videos').appendChild(clone);
-  videos.push(clone);
-  return clone;
+function newVideo(socketId) {
+  var new_video = "<video id='remote"+socketId+"' class='video' width='600' height='400' muted autoplay></video>";
+  var video_sec_width = $("#videos").width();
+  $("#videos").append(new_video);
+
+  var no_of_videos = $(".video").length;
+
+  if(no_of_videos >= 4) {
+    $(".video").attr("width","200");
+    $(".video").attr("height","150");
+  }
+  else {
+    var vid_width = video_sec_width/no_of_videos - 50;
+    $(".video").attr("width",vid_width);
+    $(".video").attr("height",(vid_width*3)/4);
+  }
+
+  return $("#remote"+socketId);
 }
 
 function removeVideo(socketId) {
-  var video = document.getElementById('remote' + socketId);
-  if(video) {
-    videos.splice(videos.indexOf(video), 1);
-    video.parentNode.removeChild(video);
+  var video = $('#remote' + socketId);
+  if(video.length !== 0) {
+    video.remove();
   }
 }
 
@@ -201,8 +211,8 @@ function webrtcioInit() {
       "video": {"mandatory": {}, "optional": []},
       "audio": true
     }, function(stream) {
-      $("#you").attr("src", URL.createObjectURL(stream));
-      $("#you").get(0).play();
+      $("#localvideo").attr("src", URL.createObjectURL(stream));
+      $("#localvideo").get(0).play();
     });
   } else {
     alert('Your browser is not supported or you have to turn on flags. In chrome you go to chrome://flags and turn on Enable PeerConnection remember to restart chrome');
@@ -213,10 +223,8 @@ function webrtcioInit() {
   rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
 
   rtc.on('add remote stream', function(stream, socketId) {
-    var new_video = cloneVideo('you', socketId);
-    $("#"+new_video.id).attr("class", "");
-    $(new_video.id).removeAttr("muted");
-    rtc.attachStream(stream, new_video.id);
+    var new_video = newVideo(socketId);
+    rtc.attachStream(stream, new_video.attr("id"));
   });
   rtc.on('disconnect stream', function(data) {
     removeVideo(data);
