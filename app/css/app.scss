@@ -60,15 +60,19 @@ h1,h2,h3,h4,h5,h6,p { color: $color-1; margin:0; }
 
 /* chatpage */
 .content-2 {
-  width: 100%;
+  width: 100%; min-width: 1000px;
   .sec { padding-right: 350px; padding-top: 25px; }
-  .chat-sec { right: 0; top: 25px; position: fixed; height: 100%; width: 350px; border-left: solid #B9B9C8 1px; overflow-y: auto; }
+  .chat-sec { right: 0; top: 25px; position: fixed; height: 100%; width: 350px; border-left: solid #B9B9C8 1px; overflow-y: auto; background-color: #ffffff; }
 
   .videos { 
     text-align: center; 
   }
 
-  .video { background-color: #000000; }
+  .video { background-color: #000000;  }
+
+  .chat-box-container textarea { 
+    width: 100%; bottom: 0; position: fixed; height: 50px;
+  }
 }
 
 /*
