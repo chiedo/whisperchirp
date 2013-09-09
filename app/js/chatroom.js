@@ -81,8 +81,13 @@ $("#chat-box").keypress(function(event){
       socket.emit('new message',{chatroom: chatroom, username: username,user_id:user_id, userphoto: userphoto, message: $("#chat-box").val() });
       $(this).focus();
       $(this).val("");
-      wc.resetRange($(this));
     }
+});
+$("#chat-box").keyup(function(event){
+  if($(this).val().trim() === "") {
+    $(this).val("");
+    wc.resetRange($(this));
+  }
 });
 
 $("#change-name").click(function(){

@@ -71,8 +71,22 @@ h1,h2,h3,h4,h5,h6,p { color: $color-1; margin:0; }
   .video { background-color: #000000;  }
 
   .chat-box-container textarea { 
-    width: 100%; bottom: 0; position: fixed; height: 50px;
+    width: 350px; bottom: 0; position: fixed; height: 50px; font-size: 12px;
   }
+}
+.chat-messages {
+  padding: 10px 0px;
+}
+.chat-message-section {
+  padding: 5px 10px;
+  clear: both;
+}
+.chat-message-picture {
+  width: 30px; float: left; padding-right: 5px;
+  img { width: 30px; height: 30px; border-bottom: 3px solid; }
+}
+.chat-message-text {
+  float: right; width: 280px; font-size: 12px;
 }
 
 /*
