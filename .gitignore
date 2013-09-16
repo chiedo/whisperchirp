@@ -7,3 +7,8 @@ build.xml
 .settings
 .idea/*
 node_modules/
+logs/
+test/
+config/
+scripts/
+app/js/vars.js

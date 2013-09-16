@@ -1,16 +1,16 @@
 {
   "name": "WhisperChirp",
   "version": "0.0.1",
-  "description": "A url based chatroom web app for angular js.",
+  "description": "A url based chatroom.",
   "keywords": [],
-  "homepage": "http://labs.chiedojohn.com",
+  "homepage": "http://chie.do",
   "repository": {
     "type": "git",
     "url": "git://github.com/chiedojohn/WhisperChirp.git"
   },
-  "author": "AngularJS Team",
+  "author": "Chiedo Labs",
   "contributors": [
-    "Chiedo John <cj@chiedojohn.org"
+    "Chiedo John <cj@chiedojohn.com"
   ],
   "main": "scripts/server.js",
   "scripts": {
@@ -22,7 +22,11 @@
     "open": ">= 0.0.2",
     "testacular": "canary",
     "jade": "*",
-    "webrtc.io" : "*"
+    "socket.io": "*",
+    "webrtc.io" : "*",
+    "webrtc.io-client" : "*",
+    "forever" : "*",
+    "ws": "*"
   },
   "engines": {
     "node": ">= 0.8.4"
