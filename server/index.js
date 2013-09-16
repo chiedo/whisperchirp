@@ -22,19 +22,19 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
   server2.listen(4000);
 
   app.get('/', function (req, res) {
-    res.render('home/index',
+    res.render('index',
       { title : 'Home' }
     );
   });
 
   app.get('/:chatroom', function (req, res) {
-    res.render('angular/index',
+    res.render('chatroom',
       { title : 'Chatroom' }
     );
   });
 
   app.get('*', function (req, res) {
-    res.render('home/404',
+    res.render('404',
       { title : '404' }
     );
   });
