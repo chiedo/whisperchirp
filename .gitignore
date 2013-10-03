@@ -12,3 +12,4 @@ test/
 config/
 scripts/
 app/js/vars.js
+server/app.js
