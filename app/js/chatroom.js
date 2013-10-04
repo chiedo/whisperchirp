@@ -47,14 +47,13 @@ webrtcioInit();
  */
 // Connect to the chatroom
 socket.emit('connect',{chatroom: chatroom, username: username, user_id: user_id });
-socket.emit('request chat history');
-socket.emit('get all users online',{chatroom: chatroom,user_id: user_id});
+socket.emit('recieve all users online',{chatroom: chatroom,user_id: user_id});
 
 socket.on('console log', function (data) {
   console.dir(data);
 });
 
-socket.on('new user online', function (data) {
+socket.on('hear new user online', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
   users_in_chatroom = data["users_in_chatroom"];
@@ -67,7 +66,7 @@ socket.on('new user online', function (data) {
   if(users_online.indexOf(user_id) == -1) wc.newUser(user_id,username);
 });
 
-socket.on('user offline', function (data) {
+socket.on('recieve user offline', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
 
@@ -79,11 +78,11 @@ socket.on('user offline', function (data) {
 });
 
 
-socket.on('already in this room', function (data) {
+socket.on('recieve already in this room', function (data) {
   alert("You are in this room in another tab. Please close this window to avoid strange behavior.");
 });
 
-socket.on('new message', function (data) {
+socket.on('recieve new message', function (data) {
   var message = data["message"];
   var username = data["username"];
   var userphoto = data["userphoto"];
@@ -108,28 +107,7 @@ socket.on('new message', function (data) {
   
 });
 
-socket.on('provide chat history', function (data) {
-  var user_id = data["user_id"];
-  var chatroom = data["chatroom"];
-  var history = $('#chat-messages').html();
-  socket.emit('import chat history',{chatroom: chatroom,user_id: user_id, history: history});
-});
-
-socket.on('import chat history', function (data) {
-  socket.emit("import chat history");
-});
-
-socket.on('set chat history', function (data) {
-  var history = data["history"];
-  var user_id = data["user_id"];
-  var chatroom = data["chatroom"];
-
-  $('#chat-messages').html(history);
-  $("#chat-pane").scrollTop($("#chat-messages").height() * 2);
-
-});
-
-socket.on('reflect name change', function (data) {
+socket.on('recieve name change', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
   $(".u"+user_id+" .chat-username").text(username);
@@ -142,7 +120,7 @@ socket.on('receive photo change', function (data) {
   $(".u"+user_id+" .chat-userphoto").attr("src",userphoto);
 });
 
-socket.on('set users online pane', function (data) {
+socket.on('recieve users online pane', function (data) {
   for (var i = 0; i < data.length; i++) {
     users_in_chatroom++;
     wc.newUser(data[i]["user_id"],data[i]["username"]);
@@ -245,7 +223,7 @@ $(window).resize(function(){
 $("#chat-box").keypress(function(event){
   var keycode = (event.keyCode ? event.keyCode : event.which);
     if(keycode == '13'){
-      socket.emit('new message',{chatroom: chatroom, username: username,user_id:user_id, userphoto: userphoto, message: $("#chat-box").val() });
+      socket.emit('give new message',{chatroom: chatroom, username: username,user_id:user_id, userphoto: userphoto, message: $("#chat-box").val() });
       $(this).focus();
       $(this).val("");
     }
