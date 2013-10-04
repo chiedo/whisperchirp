@@ -1,22 +1,23 @@
 !!!5
 html
-	head
-		title Whisper Chirp - #{title}
-		link(rel='stylesheet', href='static/css/app.css')
-		script(src='//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js')
-		block head-content
-	body
-		header(id='header', class='header-1')
-			div(class='sec')
-				div(class="ph-10")
-					img(src='/static/img/logo.png', height='20') 
-					span(class='logotext')
-						span(class='fw-300') whisper
-						span(class='fw-400') Chirp
-						span(class='fw-400 beta') beta
-		div()
-			block content
-		footer(class='footer footer-1')
-			block footer-content
-			script(src='/static/js/footer.js')
-			script(src='/static/js/functions.js')
+  head
+    title Whisper Chirp - #{title}
+    link(rel='stylesheet', href='static/css/app.css')
+    script(src='//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js')
+    block head-content
+  body
+    header(id='header', class='header-1')
+      div(class='sec')
+        div(class="ph-10")
+          a(href="/")
+            img(src='/static/img/logo.png', height='20') 
+            span(class='logotext')
+              span(class='fw-300') whisper
+              span(class='fw-400') Chirp
+              span(class='fw-400 beta') beta
+    div()
+      block content
+    footer(class='footer footer-1')
+      block footer-content
+      script(src='/static/js/footer.js')
+      script(src='/static/js/functions.js')
