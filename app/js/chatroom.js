@@ -143,7 +143,7 @@ var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || w
 
 
 function newVideo(socketId) {
-  var new_video = "<video id='remote"+socketId+"' class='video' width='600' height='400' muted autoplay></video>";
+  var new_video = "<video id='remote"+socketId+"' class='video' width='600' height='400' autoplay></video>";
   var video_sec_width = $("#videos").width();
   $("#videos").append(new_video);
 
