@@ -39,13 +39,16 @@ if(wc.getCookie(chatroom+"&username") === null || typeof wc.getCookie(chatroom+"
 }
 $("#settings-pane .chat-username").text(username);
 
+//Initialize webrtcio
+webrtcioInit();
+
+/*
+ * Socket io
+ */
 // Connect to the chatroom
 socket.emit('connect',{chatroom: chatroom, username: username, user_id: user_id });
 socket.emit('request chat history');
 socket.emit('get all users online',{chatroom: chatroom,user_id: user_id});
-
-//Initialize webrtcio
-webrtcioInit();
 
 socket.on('console log', function (data) {
   console.dir(data);
@@ -75,28 +78,6 @@ socket.on('user offline', function (data) {
   console.dir(users_in_chatroom+" users online.");
 });
 
-$("#chat-box").keypress(function(event){
-  var keycode = (event.keyCode ? event.keyCode : event.which);
-    if(keycode == '13'){
-      socket.emit('new message',{chatroom: chatroom, username: username,user_id:user_id, userphoto: userphoto, message: $("#chat-box").val() });
-      $(this).focus();
-      $(this).val("");
-    }
-});
-$("#chat-box").keyup(function(event){
-  if($(this).val().trim() === "") {
-    $(this).val("");
-    wc.resetRange($(this));
-  }
-});
-
-$("#change-name").click(function(){
-  wc.changeName();
-});
-
-$("#change-photo").click(function(){
-  wc.changePhoto();
-});
 
 socket.on('already in this room', function (data) {
   alert("You are in this room in another tab. Please close this window to avoid strange behavior.");
@@ -177,7 +158,7 @@ window.onbeforeunload = function() {
 
 
 /*
- * WEB RTC IO STUFF
+ * Web rtc io
  */
 var videos = [];
 var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
@@ -200,6 +181,7 @@ function newVideo(socketId) {
     $(".video").attr("height",(vid_width*3)/4);
   }
 
+  resizeVideos();
   return $("#remote"+socketId);
 }
 
@@ -208,6 +190,7 @@ function removeVideo(socketId) {
   if(video.length !== 0) {
     video.remove();
   }
+  resizeVideos();
 }
 
 function webrtcioInit() {
@@ -236,4 +219,44 @@ function webrtcioInit() {
   });
 }
 
+/*
+ * General Functions
+ */
+function resizeVideos() {
+  var no_vids = $("#videos").find("video").length;
+  var v_w = parseInt($("#videos").width(),0)/no_vids;
+  if(v_w > 500 ) v_w = 500; 
+  var v_h = (v_w * 3)/4;
 
+  $("#videos video").each(function(){
+    $(this).width(v_w+"px");
+    $(this).height(v_h+"px");
+  });
+}
+
+/*
+ * Handlers
+ */
+
+$("#chat-box").keypress(function(event){
+  var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == '13'){
+      socket.emit('new message',{chatroom: chatroom, username: username,user_id:user_id, userphoto: userphoto, message: $("#chat-box").val() });
+      $(this).focus();
+      $(this).val("");
+    }
+});
+$("#chat-box").keyup(function(event){
+  if($(this).val().trim() === "") {
+    $(this).val("");
+    wc.resetRange($(this));
+  }
+});
+
+$("#change-name").click(function(){
+  wc.changeName();
+});
+
+$("#change-photo").click(function(){
+  wc.changePhoto();
+});
