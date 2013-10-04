@@ -11,12 +11,12 @@ var users_in_chatroom = 0;
 var chat_colors = new Array("#cc2a36","#00a0b0","#eb6841","#67204e","#4f372d");
 
 // Check if the user has an id for this room. If so assign it otherwise create it.
-if(wc.getCookie(chatroom + "&user_id")) {
-   user_id = wc.getCookie(chatroom + "&user_id");
+if(wc.getCookie("user_id")) {
+   user_id = wc.getCookie("user_id");
 }
 else {
   user_id = Math.floor((Math.random()*1000000000000)+1);
-  wc.setCookie(chatroom + "&user_id",user_id,30);
+  wc.setCookie("user_id",user_id,30);
 }
 
 
@@ -28,14 +28,14 @@ wc.setUserColors(user_id,"#1464a8");
 $('#dynamic-style').append(".u"+user_id+" .chat-username { color: #1464a8; }");
 
 // Check if the user has a photo for this room. If so assign it otherwise create it.
-if(wc.getCookie(chatroom + "&userphoto")) userphoto = wc.getCookie(chatroom + "&userphoto");
+if(wc.getCookie("userphoto")) userphoto = wc.getCookie("userphoto");
 wc.updateChatPhoto(userphoto,user_id);
 
 // Set the username or prompt for it if its needed
-if(wc.getCookie(chatroom+"&username") === null || typeof wc.getCookie(chatroom+"&username") === "undefined" || wc.getCookie(chatroom+"&username") === "Guest") {
+if(wc.getCookie("username") === null || typeof wc.getCookie("username") === "undefined" || wc.getCookie("username") === "Guest") {
   wc.changeName();
 } else {
-  username = wc.getCookie(chatroom+"&username");
+  username = wc.getCookie("username");
 }
 $("#settings-pane .chat-username").text(username);
 
@@ -203,7 +203,8 @@ function webrtcioInit() {
       $("#localvideo").get(0).play();
     });
   } else {
-    alert('Your browser is not supported or you have to turn on flags. In chrome you go to chrome://flags and turn on Enable PeerConnection remember to restart chrome');
+    $("#videos").html();
+    $("#videos").html("<div style='text-align: left; color: gray; font-size: 12px;'>Sorry but you must use the latest version of Google Chrome or Firefox for video chat capabilites. Feel free to enjoy text chat. And if you're using Internet Explorer, don't. :)</div>");
   }
 
   var room = window.location.hash.slice(1);
@@ -225,7 +226,8 @@ function webrtcioInit() {
 function resizeVideos() {
   var no_vids = $("#videos").find("video").length;
   var v_w = parseInt($("#videos").width(),0)/no_vids;
-  if(v_w > 500 ) v_w = 500; 
+  if(v_w > 600 ) v_w = 600; 
+  if(v_w < 150 ) v_w = 150; 
   var v_h = (v_w * 3)/4;
 
   $("#videos video").each(function(){
@@ -237,7 +239,9 @@ function resizeVideos() {
 /*
  * Handlers
  */
-
+$(window).resize(function(){
+  resizeVideos();
+});
 $("#chat-box").keypress(function(event){
   var keycode = (event.keyCode ? event.keyCode : event.which);
     if(keycode == '13'){

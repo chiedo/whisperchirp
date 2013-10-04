@@ -97,7 +97,7 @@ var wc = {
       (function($) {
         username = prompt("Please enter your name (15 characters or less):"); 
         if(username === null || typeof username === "undefined") { 
-          username = wc.getCookie(chatroom+"&username");
+          username = wc.getCookie("username");
         } 
         else {
           username = jQuery.trim(username).substring(0,15);
@@ -105,7 +105,7 @@ var wc = {
         if(username === null || typeof username === "undefined" || username === "") { 
           username = "Guest";
         }
-        wc.setCookie(chatroom+"&username",username,365);
+        wc.setCookie("username",username,365);
         $(".u"+user_id+" .chat-username").text(username);
 
         socket.emit('name change',{username: username, user_id: user_id, chatroom: chatroom});
@@ -117,7 +117,7 @@ var wc = {
         useremail = jQuery.trim(useremail);
         userphoto = "http://www.gravatar.com/avatar/"+md5(useremail); 
 
-        wc.setCookie(chatroom+"&userphoto",userphoto,365);
+        wc.setCookie("userphoto",userphoto,365);
         wc.updateChatPhoto(userphoto,user_id);
         socket.emit('send photo change',{userphoto: userphoto, user_id: user_id, chatroom: chatroom});
       })(jQuery);
