@@ -44,9 +44,11 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     Connect the client to a chatroom
     */
     socket.on('connect', function (data) {
+      data = clean_data(data);
       var chatroom = data["chatroom"].toLowerCase(); 
       var username = data["username"]; 
       var user_id = data["user_id"]; 
+
       var users_in_chatroom = 1;
 
       for (var i = 0; i < users_online.length; i++) {
@@ -62,7 +64,8 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       sendToChatRoom(chatroom,socket.id,"recieve new user online", data);
     });
 
-    socket.on('disconnect', function () {
+    socket.on('disconnect', function (data) {
+      data = clean_data(data);
       var socket_data = getSocketData(socket.id);
       var chatroom = socket_data["chatroom"];
 
@@ -79,6 +82,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     Send message to all of the users who are online
     */
     socket.on('give new message', function (data) {
+      data = clean_data(data);
       var chatroom = data["chatroom"].toLowerCase();
       data["timestamp"] = new Date();
       sendToChatRoom(chatroom,socket.id,"recieve new message", data);
@@ -86,6 +90,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     });
 
     socket.on('recieve all users online', function (data) {
+      data = clean_data(data);
       var chatroom = data["chatroom"].toLowerCase();
       var user_id = data["user_id"];
       var users_in_chatroom = new Array();
@@ -99,6 +104,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     });
 
     socket.on('name change', function (data) {
+      data = clean_data(data);
       var username = data["username"];
       var socket_data = getSocketData(socket.id);
       var chatroom = socket_data["chatroom"];
@@ -110,6 +116,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     });
 
     socket.on('give photo change', function (data) {
+      data = clean_data(data);
       var user_id = data["user_id"];
       var chatroom = data["chatroom"].toLowerCase();
 
@@ -149,6 +156,23 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
         io.sockets.socket(users_online[i]["socket_id"]).emit(func,data);
       }
     }
+  }
+
+  function clean_data(x) {
+    for (var key in x) {
+      if (x.hasOwnProperty(key)) {
+        if(typeof x[key] === 'undefined') x[key] == "System Alert: Avoid This user";
+        if (typeof x[key] === 'object') {
+          x[key] = "System Alert: Avoid this user."
+        }
+        if (typeof x[key] === 'string') {
+          x[key] = x[key].replace(/(<([^>]+)>)/ig,"");;
+        }
+        if(key == "user_id") x[key] = parseInt(x[key]);
+        if(key == "chatroom" || key == "username" || key == "userphoto") x[key] = x[key].toString();
+      }
+    }
+    return x;
   }
 
   webRTC.rtc.on('chat_msg', function(data, socket) {

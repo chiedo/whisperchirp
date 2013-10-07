@@ -87,7 +87,7 @@ a { text-decoration: none; color: inherit; }
   img { width: 30px; height: 30px; border-bottom: 3px solid; }
 }
 .chat-message-text {
-  float: right; width: 280px; font-size: 12px;
+  float: right; width: 280px; font-size: 12px; word-wrap:break-word;
 }
 
 /*

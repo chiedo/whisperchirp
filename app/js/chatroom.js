@@ -88,6 +88,8 @@ socket.on('recieve new message', function (data) {
   var userphoto = data["userphoto"];
   var user_id = data["user_id"];
   var timestamp = data["timestamp"];
+  var exp2 = /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/;
+  message = message.replace(exp2,"<a href='http://$3$4$5$6$7$8' target='_blank'>$3$4$5$6$7$8</a>"); 
 
   $('#chat-messages').append("\
     <div class='chat-message-section u"+user_id+"' user_id='"+user_id+"' timestamp='"+timestamp+"'>\
