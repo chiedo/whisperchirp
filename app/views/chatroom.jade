@@ -13,11 +13,13 @@ block content
               div(id='video-toggle',class='video-toggle btn-2 off') 
                 img(src='/static/img/video-toggle.png')
               div(id='users-toggle',class='users-toggle btn-2')
-                span(id='users-online') 1
+                span(id='users-online-number') 1
                 |&nbsp; users online
                 &nbsp; 
                 img(src='/static/img/users-online-toggle.png')
+                img(class='hidden',src='/static/img/users-online-toggle-b.png')
               div(class='clear')
+          div(id='users-online-pane',class='users-online-pane hidden')
           div(id='chat-messages',class='chat-messages')
       div(class='chat-box-container')	
         textarea(id='chat-box',type='text',autocomplete='off',placeholder='Write a reply...')

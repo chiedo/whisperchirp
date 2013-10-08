@@ -52,7 +52,10 @@ socket.on('console log', function (data) {
 });
 
 socket.on('recieve all users online', function (data) {
-  $("#users-online").text(data["number_of_users_online"]);
+  updateUsersOnlineNumber(data["number_of_users_online"]);
+  for(var i = 0; i < data["users_in_chatroom"].length; i++){
+    wc.newUser(data["users_in_chatroom"][i]["user_id"],data["users_in_chatroom"][i]["username"]);
+  }
 });
 socket.on('recieve new user online', function (data) {
   var user_id = data["user_id"];
@@ -62,7 +65,7 @@ socket.on('recieve new user online', function (data) {
  
   wc.newUser(user_id,username);
   console.dir(username+" is online.");
-  $("#users-online").text(data["users_in_chatroom"]);
+  updateUsersOnlineNumber(users_in_chatroom);
   if(users_online.indexOf(user_id) == -1) wc.newUser(user_id,username);
 });
 
@@ -74,7 +77,7 @@ socket.on('recieve user offline', function (data) {
   wc.updateUsersInChatroom(users_in_chatroom);
   $("#users-online-pane .u"+user_id).remove();
   console.dir(username + " is offline");
-  $("#users-online").text(data["users_in_chatroom"]);
+  updateUsersOnlineNumber(users_in_chatroom);
 });
 
 
@@ -204,7 +207,7 @@ function webrtcioInit() {
 }
 
 /*
- * General Functions
+ * General Functions -- Move these to functions.js
  */
 function resizeVideos() {
   var no_vids = $("#videos").find("video").length;
@@ -217,6 +220,9 @@ function resizeVideos() {
     $(this).width(v_w+"px");
     $(this).height(v_h+"px");
   });
+}
+function updateUsersOnlineNumber(x){
+  $("#users-online-number").html(x);
 }
 
 /*
@@ -247,7 +253,10 @@ $("#change-name").click(function(){
 $("#change-photo").click(function(){
   wc.changePhoto();
 });
-
+$("#users-toggle").click(function(){
+  $("#users-online-pane").toggleClass("hidden");
+  $("#users-toggle img").toggleClass("hidden");
+});
 $("#video-toggle").click(function(){
   if($(this).hasClass("off")) {
     //Initialize webrtcio

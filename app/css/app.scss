@@ -8,7 +8,7 @@
  * MAIN
  */
 html { height: 100%; font-family: $font-family-1; }
-body { margin: 0; padding: 0;  }
+body { margin: 0; padding: 0;  word-wrap:break-word; }
 h1,h2,h3,h4,h5,h6,p { color: $color-1; margin:0; }
 a { text-decoration: none; color: inherit; }
 
@@ -81,6 +81,14 @@ a { text-decoration: none; color: inherit; }
   .video-toggle { float: left; margin-right: 10px; }
   .users-toggle { float: left; }
 }
+.users-online-pane { 
+  padding: 10px;
+  border-bottom: solid #B9B9C8 1px; max-height: 150px; overflow-y: scroll;
+}
+.chat-user-online {
+  padding-bottom: 3px;
+  .chat-online-block { width: 10px; height: 10px; float:left; margin-top: 5px; margin-right:5px; }
+}
 .chat-messages {
   padding: 10px 0px;
 }
@@ -93,8 +101,7 @@ a { text-decoration: none; color: inherit; }
   img { width: 30px; height: 30px; border-bottom: 3px solid; }
 }
 .chat-message-text {
-  float: right; width: 280px; font-size: 12px; word-wrap:break-word;
-}
+  float: right; width: 280px; font-size: 12px;}
 
 /*
  * REUSABLES
