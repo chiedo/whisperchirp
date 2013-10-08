@@ -39,30 +39,30 @@ if(wc.getCookie("username") === null || typeof wc.getCookie("username") === "und
 }
 $("#settings-pane .chat-username").text(username);
 
-//Initialize webrtcio
-webrtcioInit();
 
 /*
  * Socket io
  */
 // Connect to the chatroom
 socket.emit('connect',{chatroom: chatroom, username: username, user_id: user_id });
-socket.emit('recieve all users online',{chatroom: chatroom,user_id: user_id});
+socket.emit('request all users online',{chatroom: chatroom,user_id: user_id});
 
 socket.on('console log', function (data) {
   console.dir(data);
 });
 
-socket.on('hear new user online', function (data) {
+socket.on('recieve all users online', function (data) {
+  $("#users-online").text(data["number_of_users_online"]);
+});
+socket.on('recieve new user online', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
   users_in_chatroom = data["users_in_chatroom"];
   wc.updateUsersInChatroom(users_in_chatroom);
  
   wc.newUser(user_id,username);
-  console.dir(username + " is online");
-  console.dir(users_in_chatroom+" others online.");
-
+  console.dir(username+" is online.");
+  $("#users-online").text(data["users_in_chatroom"]);
   if(users_online.indexOf(user_id) == -1) wc.newUser(user_id,username);
 });
 
@@ -74,7 +74,7 @@ socket.on('recieve user offline', function (data) {
   wc.updateUsersInChatroom(users_in_chatroom);
   $("#users-online-pane .u"+user_id).remove();
   console.dir(username + " is offline");
-  console.dir(users_in_chatroom+" users online.");
+  $("#users-online").text(data["users_in_chatroom"]);
 });
 
 
@@ -140,7 +140,6 @@ window.onbeforeunload = function() {
 /*
  * Web rtc io
  */
-var videos = [];
 var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
 
 
@@ -173,7 +172,11 @@ function removeVideo(socketId) {
   resizeVideos();
 }
 
+function broadCastMyVideo() {
+
+}
 function webrtcioInit() {
+  $("#videos").prepend("<video id='localvideo' width='400' height='300' muted='' autoplay='' class='video'></video>");
   if(PeerConnection) {
     rtc.createStream({
       "video": {"mandatory": {}, "optional": []},
@@ -243,4 +246,15 @@ $("#change-name").click(function(){
 
 $("#change-photo").click(function(){
   wc.changePhoto();
+});
+
+$("#video-toggle").click(function(){
+  if($(this).hasClass("off")) {
+    //Initialize webrtcio
+    webrtcioInit();
+  }
+  else {
+
+  }
+  $(this).toggleClass("off");
 });

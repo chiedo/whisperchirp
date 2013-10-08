@@ -5,10 +5,19 @@ block content
     div(class='sec')
       div(class='pv-50 ph-50')
         div(id='videos',class='videos')
-          video(id='localvideo',class='video',width='400',height='300',muted,autoplay)
     div(class='chat-sec')
       div(class='pb-90')
         div(id='chat-pane',class='chat-pane')
+          div(id='chat-options',class='chat-options')
+            div(class='padding')
+              div(id='video-toggle',class='video-toggle btn-2 off') 
+                img(src='/static/img/video-toggle.png')
+              div(id='users-toggle',class='users-toggle btn-2')
+                span(id='users-online') 1
+                |&nbsp; users online
+                &nbsp; 
+                img(src='/static/img/users-online-toggle.png')
+              div(class='clear')
           div(id='chat-messages',class='chat-messages')
       div(class='chat-box-container')	
         textarea(id='chat-box',type='text',autocomplete='off',placeholder='Write a reply...')

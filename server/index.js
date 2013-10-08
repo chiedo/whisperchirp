@@ -89,18 +89,22 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       socket.emit("recieve new message", data);
     });
 
-    socket.on('recieve all users online', function (data) {
+    socket.on('request all users online', function (data) {
       data = clean_data(data);
       var chatroom = data["chatroom"].toLowerCase();
       var user_id = data["user_id"];
       var users_in_chatroom = new Array();
+      var number_of_users_online = 1;
 
       for (var i = 0; i < users_online.length; i++) {
         if(users_online[i]["chatroom"] == chatroom) {
-          if(users_online[i]["user_id"] != user_id) users_in_chatroom.push({user_id: users_online[i]["user_id"],username: users_online[i]["username"]});
+          if(users_online[i]["user_id"] != user_id) {
+            users_in_chatroom.push({user_id: users_online[i]["user_id"],username: users_online[i]["username"]});
+            number_of_users_online++;
+          }
         }
       }
-      socket.emit("recieve users online pane", users_in_chatroom);
+      socket.emit("recieve all users online", {users_in_chatroom: users_in_chatroom, number_of_users_online: number_of_users_online});
     });
 
     socket.on('name change', function (data) {
