@@ -14,10 +14,10 @@ block content
                 img(src='/static/img/video-toggle.png')
               div(id='users-toggle',class='users-toggle btn-2')
                 span(id='users-online-number') 1
-                |&nbsp; users online
+                |&nbsp; user<span id='plural-user' class='hidden'>s</span> online
                 &nbsp; 
-                img(src='/static/img/users-online-toggle.png')
-                img(class='hidden',src='/static/img/users-online-toggle-b.png')
+                img(id='open-arrow-uo',src='/static/img/users-online-toggle.png')
+                img(id='close-arrow-uo',class='hidden',src='/static/img/users-online-toggle-b.png')
               div(class='clear')
           div(id='users-online-pane',class='users-online-pane hidden')
           div(id='chat-messages',class='chat-messages')

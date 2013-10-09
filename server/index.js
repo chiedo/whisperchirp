@@ -127,7 +127,40 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       sendToChatRoom(chatroom,socket.id,"receive photo change", data);
     });
 
+    /*
+    Request the chat data for the chatroom from the oldest user in the room
+    */
+    socket.on('request chat history', function (data) {
+      var socket_id = socket.id;
+      var socket_data = getSocketData(socket_id);
+      var user_id = socket_data["user_id"];
+      var chatroom = socket_data["chatroom"].toLowerCase();
+
+      for (var i = 0; i < users_online.length; i++) {
+        if(users_online[i]["chatroom"] == chatroom) {
+          io.sockets.socket(users_online[i]["socket_id"]).emit("give chat history",{user_id: user_id, chatroom: chatroom});
+          break;
+        }
+      };
+    });
+
+    socket.on('give chat history', function (data) {
+      data = clean_data(data);
+      var user_id = data["user_id"];
+      var chatroom = data["chatroom"].toLowerCase();
+      var history = data["history"];
+      io.sockets.socket(getSocketId(chatroom,user_id)).emit("recieve chat history",{user_id: user_id, chatroom: chatroom,history: history});
+     });
+
+    socket.on('recieve chat history', function (data) {
+      data = clean_data(data);
+      var user_id = data["user_id"];
+      var chatroom = data["chatroom"].toLowerCase();
+      io.sockets.socket(getSocketId(chatroom,user_id)).emit("recieve chat history",{history: data["history"]});
+    });
+
   });
+
 
   function getSocketId(chatroom,user_id) {
     for (var i = 0; i < users_online.length; i++) {
@@ -166,11 +199,20 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     for (var key in x) {
       if (x.hasOwnProperty(key)) {
         if(typeof x[key] === 'undefined') x[key] == "System Alert: Avoid This user";
-        if (typeof x[key] === 'object') {
+        if(key == "history") {
+          for(var i = 0; i < x[key].length; i++) {
+            // Here I actually need to make sure the format is correct. Here I need to check to see if any of the data is incorrect. If it is, send nothing
+            x[key][i] = x[key][i].toString().replace(/(<([^>]+)>)/ig,"");
+            for (var subkey in x[key][i]) {
+              x[key][i][subkey] = x[key][i].toString().replace(/(<([^>]+)>)/ig,"");              
+            }
+          }
+        }
+        else if (typeof x[key] === 'object') {
           x[key] = "System Alert: Avoid this user."
         }
-        if (typeof x[key] === 'string') {
-          x[key] = x[key].replace(/(<([^>]+)>)/ig,"");;
+        else if (typeof x[key] === 'string') {
+          x[key] = x[key].replace(/(<([^>]+)>)/ig,"");
         }
         if(key == "user_id") x[key] = parseInt(x[key]);
         if(key == "chatroom" || key == "username" || key == "userphoto") x[key] = x[key].toString();

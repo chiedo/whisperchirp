@@ -46,12 +46,14 @@ $("#settings-pane .chat-username").text(username);
 // Connect to the chatroom
 socket.emit('connect',{chatroom: chatroom, username: username, user_id: user_id });
 socket.emit('request all users online',{chatroom: chatroom,user_id: user_id});
+socket.emit("request chat history",{chatroom: chatroom, user_id: user_id});
 
 socket.on('console log', function (data) {
   console.dir(data);
 });
 
 socket.on('recieve all users online', function (data) {
+  users_in_chatroom = data["number_of_users_online"];
   updateUsersOnlineNumber(data["number_of_users_online"]);
   for(var i = 0; i < data["users_in_chatroom"].length; i++){
     wc.newUser(data["users_in_chatroom"][i]["user_id"],data["users_in_chatroom"][i]["username"]);
@@ -132,6 +134,26 @@ socket.on('recieve users online pane', function (data) {
   }
   wc.updateUsersInChatroom(users_in_chatroom);
 });
+
+socket.on('give chat history', function (data) {
+  var user_id = data["user_id"];
+  var chatroom = data["chatroom"];
+  var history = new Array();
+  history[0] = $('#chat-messages').html();
+  // This is where I need to send the history as json. Each post as it's own number. Holding an object in each.
+  socket.emit('recieve chat history',{chatroom: chatroom,user_id: user_id, history: history});
+});
+
+socket.on('recieve chat history', function (data) {
+  var history = data["history"];
+  var user_id = data["user_id"];
+  var chatroom = data["chatroom"];
+  // This is where I need to import new history
+  console.dir(history);
+  $("#chat-messages").scrollTop($("#chat-messages").height() * 2);
+
+});
+
 
 window.onbeforeunload = function() {
   socket.onclose = function () {}; // disable onclose handler first
@@ -223,6 +245,17 @@ function resizeVideos() {
 }
 function updateUsersOnlineNumber(x){
   $("#users-online-number").html(x);
+  if(users_in_chatroom <= 1 ) {
+    $("#users-online-pane").addClass("hidden");
+    $("#open-arrow-uo").addClass("hidden");
+    $("#close-arrow-uo").addClass("hidden");
+    $("#plural-user").addClass("hidden");
+  }
+  else {
+    $("#open-arrow-uo").removeClass("hidden");
+    $("#close-arrow-uo").addClass("hidden");
+    $("#plural-user").removeClass("hidden");
+  }
 }
 
 /*
@@ -254,8 +287,10 @@ $("#change-photo").click(function(){
   wc.changePhoto();
 });
 $("#users-toggle").click(function(){
-  $("#users-online-pane").toggleClass("hidden");
-  $("#users-toggle img").toggleClass("hidden");
+  if(users_in_chatroom > 1) {
+    $("#users-online-pane").toggleClass("hidden");
+    $("#users-toggle img").toggleClass("hidden");
+  }
 });
 $("#video-toggle").click(function(){
   if($(this).hasClass("off")) {
@@ -263,7 +298,7 @@ $("#video-toggle").click(function(){
     webrtcioInit();
   }
   else {
-
+    location.reload();
   }
   $(this).toggleClass("off");
 });
