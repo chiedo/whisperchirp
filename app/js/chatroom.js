@@ -170,11 +170,6 @@ window.onbeforeunload = function() {
 
 
 
-/*
- * Web rtc io
- */
-var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
-
 
 function newVideo(socketId) {
   var new_video = "<video id='remote"+socketId+"' class='video' width='600' height='400' autoplay></video>";
@@ -206,57 +201,23 @@ function removeVideo(socketId) {
 }
 
 function joinBroadcast() {
-  rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
   $("#videos").prepend("<video id='localvideo' width='400' height='300' muted='' autoplay='' class='video'></video>");
-  if(PeerConnection) {
-      rtc.createStream({
-        "video": true,
-        "audio": true
-      }, function(stream) {
-        $("#localvideo").attr("src", URL.createObjectURL(stream));
-        $("#localvideo").get(0).play();
-        rtc.attachStream(stream, 'localvideo');
-      });
-  }
-  rtc.on('add remote stream', function(stream, socketId) {
-    var new_video = newVideo(socketId);
-    rtc.attachStream(stream, new_video.attr("id"));
+
+  rtc.createStream({
+    "video": true,
+    "audio": true
+  }, function(stream) {
+    $("#localvideo").attr("src", URL.createObjectURL(stream));
+    $("#localvideo").get(0).play();
+    rtc.attachStream(stream, 'localvideo');
   });
-  rtc.on('disconnect stream', function(data) {
-    removeVideo(data);
-  });
+
 }
 
 function watchBroadcasts() {
-  rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
-  if(PeerConnection) {
-  }
-  else {
-    $("#videos").html();
-    $("#videos").html("<div style='text-align: left; color: gray; font-size: 12px;'>Sorry but you must use the latest version of Google Chrome or Firefox for video chat capabilites. Feel free to enjoy text chat. And if you're using Internet Explorer, don't. :)</div>");
-  }
-
-  rtc.on('add remote stream', function(stream, socketId) {
-    var new_video = newVideo(socketId);
-    rtc.attachStream(stream, new_video.attr("id"));
-  });
-  rtc.on('disconnect stream', function(data) {
-    removeVideo(data);
-  });
-
   // This tells the browser it's ready to start watching the broadcasts
   setTimeout(function() { 
-    
-    // Get all existing connections
-    //rtc.createPeerConnections();
     rtc.fire("ready");
-    // For each connection, receive it to start that video
-    //for(key in rtc.peerConnections){ 
-      //if(typeof key !== 'undefined'){
-        //rtc.receiveOffer(key.toString(),session_desc);
-
-     //}
-    //}
   },1000);
 }
 
@@ -298,13 +259,29 @@ $(document).ready(function(){
    * Web rtc io
    */
   var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
-  if(join_broadcast) {
-    joinBroadcast();
-    $("#video-toggle").removeClass("off");
+  if(PeerConnection) {
+    rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
+
+    rtc.on('add remote stream', function(stream, socketId) {
+      var new_video = newVideo(socketId);
+      rtc.attachStream(stream, new_video.attr("id"));
+    });
+    rtc.on('disconnect stream', function(data) {
+      removeVideo(data);
+    });
+
+    if(join_broadcast) {
+      joinBroadcast();
+      $("#video-toggle").removeClass("off");
+    }
+    else {
+      watchBroadcasts();
+      $("#video-toggle").addClass("off");
+    }
   }
   else {
-    watchBroadcasts();
-    $("#video-toggle").addClass("off");
+    $("#videos").html();
+    $("#videos").html("<div style='text-align: left; color: gray; font-size: 12px;'>Sorry but you must use the latest version of Google Chrome or Firefox for video chat capabilites. Feel free to enjoy text chat. And if you're using Internet Explorer, don't. :)</div>");
   }
 });
 $(window).resize(function(){
