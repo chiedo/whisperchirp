@@ -176,7 +176,8 @@ IE
 RESPONSIVE STYLES
 */
 @media (max-width : 1000px) {
-  .chat-sec { display: none; }
+  .content-2 .chat-sec { position: absolute; right: -10000px; }
+  .video-toggle { position: fixed; left: 0; }
   body { overflow: hidden; }
   .content-2 { min-width: 0; }
   .content-2 .sec { padding-right: 0; }
