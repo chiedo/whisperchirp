@@ -278,6 +278,8 @@ $(document).ready(function(){
       watchBroadcasts();
       $("#video-toggle").addClass("off");
     }
+
+    resizeVideos();
   }
   else {
     $("#videos").html();
