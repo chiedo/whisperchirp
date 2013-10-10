@@ -5,11 +5,18 @@ var useremail;
 var userphoto = "http://www.gravatar.com/avatar/none";
 var user_id;
 var new_message_sound = new Audio("/static/mp3/new-message-sound.mp3");
-
+var join_broadcast = false;
 var users_online = new Array();
 var users_in_chatroom = 0;
 var chat_colors = new Array("#cc2a36","#00a0b0","#eb6841","#67204e","#4f372d");
 
+// Sets cookie to determine whether or not user just watches or joins broadcast.
+if(wc.getCookie("join_broadcast&"+chatroom)) {
+  if(wc.getCookie("join_broadcast&"+chatroom) == "true") join_broadcast = true; console.dir("true");
+}
+else {
+  wc.setCookie("join_broadcast&"+chatroom,"false",30);
+}
 
 // Check if the user has an id for this room. If so assign it otherwise create it.
 if(wc.getCookie("user_id")) {
@@ -198,7 +205,8 @@ function removeVideo(socketId) {
   resizeVideos();
 }
 
-function startBroadcast() {
+function joinBroadcast() {
+  rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
   $("#videos").prepend("<video id='localvideo' width='400' height='300' muted='' autoplay='' class='video'></video>");
   if(PeerConnection) {
       rtc.createStream({
@@ -210,11 +218,17 @@ function startBroadcast() {
         rtc.attachStream(stream, 'localvideo');
       });
   }
+  rtc.on('add remote stream', function(stream, socketId) {
+    var new_video = newVideo(socketId);
+    rtc.attachStream(stream, new_video.attr("id"));
+  });
+  rtc.on('disconnect stream', function(data) {
+    removeVideo(data);
+  });
 }
 
 function watchBroadcasts() {
   rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
-  console.dir("now watching");
   if(PeerConnection) {
   }
   else {
@@ -232,15 +246,17 @@ function watchBroadcasts() {
 
   // This tells the browser it's ready to start watching the broadcasts
   setTimeout(function() { 
+    
     // Get all existing connections
-    rtc.createPeerConnections();
+    //rtc.createPeerConnections();
+    rtc.fire("ready");
     // For each connection, receive it to start that video
-    for(key in rtc.peerConnections){ 
-      if(typeof key !== 'undefined'){
+    //for(key in rtc.peerConnections){ 
+      //if(typeof key !== 'undefined'){
         //rtc.receiveOffer(key.toString(),session_desc);
 
-     }
-    }
+     //}
+    //}
   },1000);
 }
 
@@ -282,7 +298,14 @@ $(document).ready(function(){
    * Web rtc io
    */
   var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
-  watchBroadcasts();
+  if(join_broadcast) {
+    joinBroadcast();
+    $("#video-toggle").removeClass("off");
+  }
+  else {
+    watchBroadcasts();
+    $("#video-toggle").addClass("off");
+  }
 });
 $(window).resize(function(){
   resizeVideos();
@@ -317,11 +340,10 @@ $("#users-toggle").click(function(){
 });
 $("#video-toggle").click(function(){
   if($(this).hasClass("off")) {
-    //Broadcast my video
-    startBroadcast();
+    wc.setCookie("join_broadcast&"+chatroom,"true",30);
   }
   else {
-    location.reload();
+    wc.setCookie("join_broadcast&"+chatroom,"false",30);
   }
-  $(this).toggleClass("off");
+  location.href="/"+chatroom;
 });
