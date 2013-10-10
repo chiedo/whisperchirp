@@ -10,6 +10,7 @@ var users_online = new Array();
 var users_in_chatroom = 0;
 var chat_colors = new Array("#cc2a36","#00a0b0","#eb6841","#67204e","#4f372d");
 
+
 // Check if the user has an id for this room. If so assign it otherwise create it.
 if(wc.getCookie("user_id")) {
    user_id = wc.getCookie("user_id");
@@ -52,14 +53,14 @@ socket.on('console log', function (data) {
   console.dir(data);
 });
 
-socket.on('recieve all users online', function (data) {
+socket.on('receive all users online', function (data) {
   users_in_chatroom = data["number_of_users_online"];
   updateUsersOnlineNumber(data["number_of_users_online"]);
   for(var i = 0; i < data["users_in_chatroom"].length; i++){
     wc.newUser(data["users_in_chatroom"][i]["user_id"],data["users_in_chatroom"][i]["username"]);
   }
 });
-socket.on('recieve new user online', function (data) {
+socket.on('receive new user online', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
   users_in_chatroom = data["users_in_chatroom"];
@@ -71,7 +72,7 @@ socket.on('recieve new user online', function (data) {
   if(users_online.indexOf(user_id) == -1) wc.newUser(user_id,username);
 });
 
-socket.on('recieve user offline', function (data) {
+socket.on('receive user offline', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
 
@@ -83,11 +84,11 @@ socket.on('recieve user offline', function (data) {
 });
 
 
-socket.on('recieve already in this room', function (data) {
+socket.on('receive already in this room', function (data) {
   alert("You are in this room in another tab. Please close this window to avoid strange behavior.");
 });
 
-socket.on('recieve new message', function (data) {
+socket.on('receive new message', function (data) {
   var message = data["message"];
   var username = data["username"];
   var userphoto = data["userphoto"];
@@ -114,7 +115,7 @@ socket.on('recieve new message', function (data) {
   
 });
 
-socket.on('recieve name change', function (data) {
+socket.on('receive name change', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
   $(".u"+user_id+" .chat-username").text(username);
@@ -127,7 +128,7 @@ socket.on('receive photo change', function (data) {
   $(".u"+user_id+" .chat-userphoto").attr("src",userphoto);
 });
 
-socket.on('recieve users online pane', function (data) {
+socket.on('receive users online pane', function (data) {
   for (var i = 0; i < data.length; i++) {
     users_in_chatroom++;
     wc.newUser(data[i]["user_id"],data[i]["username"]);
@@ -141,10 +142,10 @@ socket.on('give chat history', function (data) {
   var history = new Array();
   history[0] = $('#chat-messages').html();
   // This is where I need to send the history as json. Each post as it's own number. Holding an object in each.
-  socket.emit('recieve chat history',{chatroom: chatroom,user_id: user_id, history: history});
+  socket.emit('receive chat history',{chatroom: chatroom,user_id: user_id, history: history});
 });
 
-socket.on('recieve chat history', function (data) {
+socket.on('receive chat history', function (data) {
   var history = data["history"];
   var user_id = data["user_id"];
   var chatroom = data["chatroom"];
@@ -197,27 +198,29 @@ function removeVideo(socketId) {
   resizeVideos();
 }
 
-function broadCastMyVideo() {
-
-}
-function webrtcioInit() {
+function startBroadcast() {
   $("#videos").prepend("<video id='localvideo' width='400' height='300' muted='' autoplay='' class='video'></video>");
   if(PeerConnection) {
-    rtc.createStream({
-      "video": {"mandatory": {}, "optional": []},
-      "audio": true
-    }, function(stream) {
-      $("#localvideo").attr("src", URL.createObjectURL(stream));
-      $("#localvideo").get(0).play();
-    });
-  } else {
+      rtc.createStream({
+        "video": true,
+        "audio": true
+      }, function(stream) {
+        $("#localvideo").attr("src", URL.createObjectURL(stream));
+        $("#localvideo").get(0).play();
+        rtc.attachStream(stream, 'localvideo');
+      });
+  }
+}
+
+function watchBroadcasts() {
+  rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
+  console.dir("now watching");
+  if(PeerConnection) {
+  }
+  else {
     $("#videos").html();
     $("#videos").html("<div style='text-align: left; color: gray; font-size: 12px;'>Sorry but you must use the latest version of Google Chrome or Firefox for video chat capabilites. Feel free to enjoy text chat. And if you're using Internet Explorer, don't. :)</div>");
   }
-
-  var room = window.location.hash.slice(1);
-
-  rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
 
   rtc.on('add remote stream', function(stream, socketId) {
     var new_video = newVideo(socketId);
@@ -226,6 +229,19 @@ function webrtcioInit() {
   rtc.on('disconnect stream', function(data) {
     removeVideo(data);
   });
+
+  // This tells the browser it's ready to start watching the broadcasts
+  setTimeout(function() { 
+    // Get all existing connections
+    rtc.createPeerConnections();
+    // For each connection, receive it to start that video
+    for(key in rtc.peerConnections){ 
+      if(typeof key !== 'undefined'){
+        //rtc.receiveOffer(key.toString(),session_desc);
+
+     }
+    }
+  },1000);
 }
 
 /*
@@ -261,6 +277,13 @@ function updateUsersOnlineNumber(x){
 /*
  * Handlers
  */
+$(document).ready(function(){
+  /*
+   * Web rtc io
+   */
+  var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
+  watchBroadcasts();
+});
 $(window).resize(function(){
   resizeVideos();
 });
@@ -294,8 +317,8 @@ $("#users-toggle").click(function(){
 });
 $("#video-toggle").click(function(){
   if($(this).hasClass("off")) {
-    //Initialize webrtcio
-    webrtcioInit();
+    //Broadcast my video
+    startBroadcast();
   }
   else {
     location.reload();

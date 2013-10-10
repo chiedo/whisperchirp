@@ -54,14 +54,14 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       for (var i = 0; i < users_online.length; i++) {
         if(users_online[i]["chatroom"] === chatroom) {
           users_in_chatroom++;
-          if(users_online[i]["user_id"] === user_id ) socket.emit("recieve already in this room");
+          if(users_online[i]["user_id"] === user_id ) socket.emit("receive already in this room");
         }
       }
 
       data["users_in_chatroom"] = users_in_chatroom;
 
       users_online.push({ socket_id: socket.id, chatroom: chatroom, user_id: user_id, username: username  });
-      sendToChatRoom(chatroom,socket.id,"recieve new user online", data);
+      sendToChatRoom(chatroom,socket.id,"receive new user online", data);
     });
 
     socket.on('disconnect', function (data) {
@@ -71,7 +71,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
 
       for (var i = 0; i < users_online.length; i++) {
         if(users_online[i]["socket_id"] == socket.id) { 
-          sendToChatRoom(chatroom,socket.id,"recieve user offline", {user_id: users_online[i]["user_id"], username: users_online[i]["username"]});
+          sendToChatRoom(chatroom,socket.id,"receive user offline", {user_id: users_online[i]["user_id"], username: users_online[i]["username"]});
           users_online.splice(i, 1);
           break;
         }
@@ -85,8 +85,8 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       data = clean_data(data);
       var chatroom = data["chatroom"].toLowerCase();
       data["timestamp"] = new Date();
-      sendToChatRoom(chatroom,socket.id,"recieve new message", data);
-      socket.emit("recieve new message", data);
+      sendToChatRoom(chatroom,socket.id,"receive new message", data);
+      socket.emit("receive new message", data);
     });
 
     socket.on('request all users online', function (data) {
@@ -104,7 +104,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
           }
         }
       }
-      socket.emit("recieve all users online", {users_in_chatroom: users_in_chatroom, number_of_users_online: number_of_users_online});
+      socket.emit("receive all users online", {users_in_chatroom: users_in_chatroom, number_of_users_online: number_of_users_online});
     });
 
     socket.on('name change', function (data) {
@@ -115,8 +115,8 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       socket_data["username"] = username;
       setSocketUsername(socket.id, username);
 
-      sendToChatRoom(chatroom,socket.id,"recieve name change", socket_data);
-      socket.emit("recieve name change",socket_data);
+      sendToChatRoom(chatroom,socket.id,"receive name change", socket_data);
+      socket.emit("receive name change",socket_data);
     });
 
     socket.on('give photo change', function (data) {
@@ -149,14 +149,14 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       var user_id = data["user_id"];
       var chatroom = data["chatroom"].toLowerCase();
       var history = data["history"];
-      io.sockets.socket(getSocketId(chatroom,user_id)).emit("recieve chat history",{user_id: user_id, chatroom: chatroom,history: history});
+      io.sockets.socket(getSocketId(chatroom,user_id)).emit("receive chat history",{user_id: user_id, chatroom: chatroom,history: history});
      });
 
-    socket.on('recieve chat history', function (data) {
+    socket.on('receive chat history', function (data) {
       data = clean_data(data);
       var user_id = data["user_id"];
       var chatroom = data["chatroom"].toLowerCase();
-      io.sockets.socket(getSocketId(chatroom,user_id)).emit("recieve chat history",{history: data["history"]});
+      io.sockets.socket(getSocketId(chatroom,user_id)).emit("receive chat history",{history: data["history"]});
     });
 
   });
