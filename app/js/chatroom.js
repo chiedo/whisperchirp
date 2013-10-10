@@ -12,7 +12,7 @@ var chat_colors = new Array("#cc2a36","#00a0b0","#eb6841","#67204e","#4f372d");
 
 // Sets cookie to determine whether or not user just watches or joins broadcast.
 if(wc.getCookie("join_broadcast&"+chatroom)) {
-  if(wc.getCookie("join_broadcast&"+chatroom) == "true") join_broadcast = true; console.dir("true");
+  if(wc.getCookie("join_broadcast&"+chatroom) == "true") join_broadcast = true;
 }
 else {
   wc.setCookie("join_broadcast&"+chatroom,"false",30);
@@ -117,7 +117,7 @@ socket.on('receive new message', function (data) {
     <div class='clear'></div>\
   ");
 
-  $("#chat-pane").scrollTop($("#chat-messages").height() * 2);
+  $("#chat-messages").scrollTop($("#chat-messages .chat-message-section").length * 5000);
   new_message_sound.play();
   
 });
@@ -255,6 +255,7 @@ function updateUsersOnlineNumber(x){
  * Handlers
  */
 $(document).ready(function(){
+  $(window).resize();
   /*
    * Web rtc io
    */
@@ -288,6 +289,7 @@ $(document).ready(function(){
 });
 $(window).resize(function(){
   resizeVideos();
+  $("#chat-messages").css("height",$(window).height() - 145 + "px");
 });
 $("#chat-box").keypress(function(event){
   var keycode = (event.keyCode ? event.keyCode : event.which);
