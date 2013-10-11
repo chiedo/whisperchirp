@@ -2,7 +2,8 @@ var socket = io.connect("http://"+SERVER_ADDRESS);
 var chatroom = window.location.pathname.split('/').pop().toLowerCase();
 var username;
 var useremail;
-var userphoto = "http://www.gravatar.com/avatar/none";
+var defaultuserphoto = "http://www.gravatar.com/avatar/none";
+var userphoto = defaultuserphoto;
 var user_id;
 var new_message_sound = new Audio("/static/mp3/new-message-sound.mp3");
 var join_broadcast = false;
@@ -10,21 +11,23 @@ var users_online = new Array();
 var users_in_chatroom = 0;
 var chat_colors = new Array("#cc2a36","#00a0b0","#eb6841","#67204e","#4f372d");
 
+
+
 // Sets cookie to determine whether or not user just watches or joins broadcast.
 if(wc.getCookie("join_broadcast&"+chatroom)) {
   if(wc.getCookie("join_broadcast&"+chatroom) == "true") join_broadcast = true;
 }
 else {
-  wc.setCookie("join_broadcast&"+chatroom,"false",30);
+  wc.setCookie("join_broadcast&"+chatroom,"false",365);
 }
 
 // Check if the user has an id for this room. If so assign it otherwise create it.
 if(wc.getCookie("user_id")) {
-   user_id = wc.getCookie("user_id");
+  user_id = wc.getCookie("user_id");
 }
 else {
   user_id = Math.floor((Math.random()*1000000000000)+1);
-  wc.setCookie("user_id",user_id,30);
+  wc.setCookie("user_id",user_id,365);
 }
 
 
@@ -36,16 +39,19 @@ wc.setUserColors(user_id,"#1464a8");
 $('#dynamic-style').append(".u"+user_id+" .chat-username { color: #1464a8; }");
 
 // Check if the user has a photo for this room. If so assign it otherwise create it.
-if(wc.getCookie("userphoto")) userphoto = wc.getCookie("userphoto");
+if(wc.getCookie("userphoto")) {
+  userphoto = wc.getCookie("userphoto");
+  $("#settings-userphoto").val(userphoto);
+}
 wc.updateChatPhoto(userphoto,user_id);
 
 // Set the username or prompt for it if its needed
 if(wc.getCookie("username") === null || typeof wc.getCookie("username") === "undefined" || wc.getCookie("username") === "Guest") {
-  wc.changeName();
+  username = 'Guest';
 } else {
   username = wc.getCookie("username");
+  $("#settings-username").val(username);
 }
-$("#settings-pane .chat-username").text(username);
 
 
 /*
@@ -111,8 +117,8 @@ socket.on('receive name change', function (data) {
 socket.on('receive photo change', function (data) {
   var userphoto = data["userphoto"];
   var user_id = data["user_id"];
-
   $(".u"+user_id+" .chat-userphoto").attr("src",userphoto);
+  validateAllPhotos();
 });
 
 socket.on('receive users online pane', function (data) {
@@ -130,13 +136,15 @@ socket.on('give chat history', function (data) {
   var count = 0;
   
   $("#chat-messages .chat-message-section").each(function(){
-    history[count] = {
-      "message": $(this).find(".chat-message").first().text(),
-      "username": $(this).find(".chat-username").first().text(),
-      "userphoto": $(this).find(".chat-userphoto").first().attr("src"),
-      "user_id": $(this).attr("user_id"),
-      "timestamp": $(this).attr("timestamp")
-    };
+    if($(this).find(".chat-username").first().text() != "system_messenger") {
+      history[count] = {
+        "message": $(this).find(".chat-message").first().text(),
+        "username": $(this).find(".chat-username").first().text(),
+        "userphoto": $(this).find(".chat-userphoto").first().attr("src"),
+        "user_id": $(this).attr("user_id"),
+        "timestamp": $(this).attr("timestamp")
+      };
+    }
     count++;
   });
   // This is where I need to send the history as json. Each post as it's own number. Holding an object in each.
@@ -147,8 +155,6 @@ socket.on('receive chat history', function (data) {
   var history = data["history"];
   var user_id = data["user_id"];
   var chatroom = data["chatroom"];
-  // This is where I need to import new history
-  console.dir(history);
   for(var i=0; i < history.length; i++) {
     addChatMessage(history[i]);
   }
@@ -181,7 +187,16 @@ function newVideo(socketId) {
     $(".video").attr("width",vid_width);
     $(".video").attr("height",(vid_width*3)/4);
   }
-
+  
+  if($("#videos video").length > 8) {
+    addChatMessage({
+      "message": "More than 8 videos at once it not recommended. You may experience slow service.",
+      "username" : "system_messenger",
+      "userphoto":"/static/img/chat-logo.png",
+      "user_id": "system_messenger",
+      "timestamp": new Date()
+    }); 
+  }
   resizeVideos();
   return $("#remote"+socketId);
 }
@@ -193,6 +208,7 @@ function addChatMessage(data) {
   var timestamp = data["timestamp"];
   var exp2 = /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/;
   message = message.replace(exp2,"<a href='http://$3$4$5$6$7$8' target='_blank'>$3$4$5$6$7$8</a>"); 
+  validateLastPhoto();
 
   $('#chat-messages').append("\
     <div class='chat-message-section u"+user_id+"' user_id='"+user_id+"' timestamp='"+timestamp+"'>\
@@ -268,7 +284,17 @@ function updateUsersOnlineNumber(x){
     $("#plural-user").removeClass("hidden");
   }
 }
+function validateLastPhoto(){
+  $("#chat-messages img").last().error(function(){
+    $(this).attr("eoa",defaultuserphoto);
+  });
+}
+function validateAllPhotos(){
+  $("#chat-messages img").error(function(){
+    $(this).attr("src",defaultuserphoto);
+  });
 
+}
 /*
  * Handlers
  */
@@ -347,3 +373,4 @@ $("#video-toggle").click(function(){
   }
   location.href="/"+chatroom;
 });
+

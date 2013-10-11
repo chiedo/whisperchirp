@@ -12,4 +12,5 @@ test/
 config/
 scripts/
 app/js/vars.js
+app/js/analytics.js
 server/app.js

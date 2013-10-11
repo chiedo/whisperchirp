@@ -45,7 +45,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     */
     socket.on('connect', function (data) {
       data = clean_data(data);
-      var chatroom = data["chatroom"].toLowerCase(); 
+      var chatroom = data["chatroom"]; 
       var username = data["username"]; 
       var user_id = data["user_id"]; 
 
@@ -83,7 +83,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     */
     socket.on('give new message', function (data) {
       data = clean_data(data);
-      var chatroom = data["chatroom"].toLowerCase();
+      var chatroom = data["chatroom"];
       data["timestamp"] = new Date();
       sendToChatRoom(chatroom,socket.id,"receive new message", data);
       socket.emit("receive new message", data);
@@ -91,7 +91,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
 
     socket.on('request all users online', function (data) {
       data = clean_data(data);
-      var chatroom = data["chatroom"].toLowerCase();
+      var chatroom = data["chatroom"];
       var user_id = data["user_id"];
       var users_in_chatroom = new Array();
       var number_of_users_online = 1;
@@ -107,24 +107,23 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       socket.emit("receive all users online", {users_in_chatroom: users_in_chatroom, number_of_users_online: number_of_users_online});
     });
 
-    socket.on('name change', function (data) {
-      data = clean_data(data);
+    socket.on('give name change', function (data) {
       var username = data["username"];
       var socket_data = getSocketData(socket.id);
-      var chatroom = socket_data["chatroom"];
       socket_data["username"] = username;
       setSocketUsername(socket.id, username);
-
-      sendToChatRoom(chatroom,socket.id,"receive name change", socket_data);
+      //Here need to do a send to all user chatrooms function
+      //sendToChatRoom(chatroom,socket.id,"receive name change", socket_data);
       socket.emit("receive name change",socket_data);
     });
 
     socket.on('give photo change', function (data) {
-      data = clean_data(data);
-      var user_id = data["user_id"];
-      var chatroom = data["chatroom"].toLowerCase();
+      var userphoto = data["userphoto"];
+      var socket_data = getSocketData(socket.id);
+      socket_data["userphoto"] = userphoto;
 
-      sendToChatRoom(chatroom,socket.id,"receive photo change", data);
+      //sendToChatRoom(chatroom,socket.id,"receive photo change", data);
+      socket.emit("receive photo change",socket_data);
     });
 
     /*
@@ -134,7 +133,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
       var socket_id = socket.id;
       var socket_data = getSocketData(socket_id);
       var user_id = socket_data["user_id"];
-      var chatroom = socket_data["chatroom"].toLowerCase();
+      var chatroom = socket_data["chatroom"];
 
       for (var i = 0; i < users_online.length; i++) {
         if(users_online[i]["chatroom"] == chatroom) {
@@ -147,7 +146,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     socket.on('give chat history', function (data) {
       data = clean_data(data);
       var user_id = data["user_id"];
-      var chatroom = data["chatroom"].toLowerCase();
+      var chatroom = data["chatroom"];
       var history = data["history"];
       io.sockets.socket(getSocketId(chatroom,user_id)).emit("receive chat history",{user_id: user_id, chatroom: chatroom,history: history});
      });
@@ -155,7 +154,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     socket.on('receive chat history', function (data) {
       data = clean_data(data);
       var user_id = data["user_id"];
-      var chatroom = data["chatroom"].toLowerCase();
+      var chatroom = data["chatroom"];
       io.sockets.socket(getSocketId(chatroom,user_id)).emit("receive chat history",{history: data["history"]});
     });
 
@@ -209,11 +208,13 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
             }
           }
         }
-        else if (typeof x[key]) {
+        else {
           x[key] = x[key].toString();
           x[key] = x[key].replace(/(<([^>]+)>)/ig,"");
           x[key] = x[key].replace("\'","");
           x[key] = x[key].replace("\"","");
+          if(key == "username") x[key] == x[key].substring(0, 10);
+          if(key == "chatroom") x[key] == x[key].toLowerCase();
         }
       }
     }

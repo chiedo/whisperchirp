@@ -8,6 +8,20 @@ html
     block head-content
   body
     header(id='header', class='header-1')
+      div(id='settings-panel', class='settings-panel')
+        div(class='padding')
+          div(id='disclaimer',class='disclaimer hidden') 
+            | Welcome to Whisper Chirp. Thanks for trying out our beta version. Since it's in beta mode, there may be bugs here and there so please point them out if you notice any. Whisper chirp is for public use, so use at your own risk and don't talk to strangers. You must be at least 18 to use this service or receive your parent's consent. &lt;-- Sounds legal enough for the time being.
+          label() Display name
+          input(id='settings-username',type='text',placeholder='What displays in the chatroom.',maxlength='15')
+          label() Photo URL
+          input(id='settings-userphoto',type='text',placeholder='URL of an photo of you.')
+          div(id='settings-update',class='settings-update') Save
+          div(class='clear')
+          div(id='see-disclaimer',class='see-disclaimer') Disclaimer
+          a(class='suggestions',href='mailto:contact@chie.do') Suggestions
+      div(id='settings-icon',class='settings-icon')
+        img(src='/static/img/settings-icon.png')
       div(class='sec')
         div(class="ph-10")
           a(href="/")
@@ -20,5 +34,5 @@ html
       block content
     footer(class='footer footer-1')
       block footer-content
-      script(src='/static/js/footer.js')
       script(src='/static/js/functions.js')
+      script(src='/static/js/footer.js')

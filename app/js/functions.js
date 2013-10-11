@@ -95,31 +95,22 @@ var wc = {
     },
     changeName: function() {
       (function($) {
-        username = prompt("Please enter your name (15 characters or less):"); 
-        if(username === null || typeof username === "undefined") { 
-          username = wc.getCookie("username");
-        } 
-        else {
-          username = jQuery.trim(username).substring(0,15);
-        }
-        if(username === null || typeof username === "undefined" || username === "") { 
-          username = "Guest";
-        }
+        username = $("#settings-username").val(); 
+        if(username === null) username = "Guest";
         wc.setCookie("username",username,365);
         $(".u"+user_id+" .chat-username").text(username);
 
-        socket.emit('name change',{username: username, user_id: user_id, chatroom: chatroom});
+        socket.emit('give name change',{username: username, user_id: user_id});
       })(jQuery);
     },
     changePhoto: function() {
       (function($) {
-        useremail = prompt("Please enter your email address (gravatar account required)."); 
-        useremail = jQuery.trim(useremail);
-        userphoto = "http://www.gravatar.com/avatar/"+md5(useremail); 
-
+        userphoto = $("#settings-userphoto").val(); 
+        if(userphoto === null) userphoto = defaultuserphoto;
         wc.setCookie("userphoto",userphoto,365);
+        validateAllPhotos();
         wc.updateChatPhoto(userphoto,user_id);
-        socket.emit('send photo change',{userphoto: userphoto, user_id: user_id, chatroom: chatroom});
+        socket.emit('give photo change',{userphoto: userphoto, user_id: user_id});
       })(jQuery);
     },
     updateChatPhoto: function(path,user_id) {
