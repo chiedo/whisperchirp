@@ -33,8 +33,10 @@ a { text-decoration: none; color: inherit; }
   .settings-update { display: inline-block; padding: 5px 10px; color: #ffffff; background-color: #01B5AA; cursor: pointer; margin-top: 10px; }
 
   .disclaimer { color: #CCCCCC; margin-bottom: 10px; font-size: 14px; }
-  .see-disclaimer { color: #ffffff; margin-top: 10px; cursor: pointer; text-decoration: underline; font-size: 10px; float: left; }
-  .suggestions { color: #ffffff; margin-top: 10px; text-decoration: underline; font-size: 10px; float: left; margin-left: 10px; }
+  .see-disclaimer { color: #ffffff; margin-top: 10px; cursor: pointer; text-decoration: underline; font-size: 10px; display: inline-block; }
+  .suggestions { color: #ffffff; margin-top: 10px; text-decoration: underline; font-size: 10px; display: inline-block; margin-left: 10px; }
+  .info { color: #ffffff; margin-top: 10px; font-size: 10px; }
+    .info a { color: #ffffff; text-decoration: underline; }
 }
 .settings-icon { right: 20px; height: 20px; position: absolute; right: 10px; top: 2px; cursor: pointer; }
 
@@ -215,8 +217,9 @@ RESPONSIVE STYLES
     h5 { font-size: 14px; }
     h6 { font-size: 10px; }
     .chatsearch input { padding: 5px 2%; width: 85%; text-align: center; margin-bottom: 10px; }
-
   }
+  .settings-panel { max-width: 70%; }
+  .logotext { display: none !important; }
 }
 
 @media (max-width : $mob-width) {

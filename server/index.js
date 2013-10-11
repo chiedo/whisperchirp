@@ -108,21 +108,24 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
     });
 
     socket.on('give name change', function (data) {
+      data = clean_data(data);
       var username = data["username"];
+      var chatroom = data["chatroom"];
       var socket_data = getSocketData(socket.id);
       socket_data["username"] = username;
       setSocketUsername(socket.id, username);
-      //Here need to do a send to all user chatrooms function
-      //sendToChatRoom(chatroom,socket.id,"receive name change", socket_data);
+      sendToChatRoom(chatroom,socket.id,"receive name change", socket_data);
       socket.emit("receive name change",socket_data);
     });
 
     socket.on('give photo change', function (data) {
+      data = clean_data(data);
       var userphoto = data["userphoto"];
+      var chatroom = data["chatroom"];
       var socket_data = getSocketData(socket.id);
       socket_data["userphoto"] = userphoto;
 
-      //sendToChatRoom(chatroom,socket.id,"receive photo change", data);
+      sendToChatRoom(chatroom,socket.id,"receive photo change", data);
       socket.emit("receive photo change",socket_data);
     });
 
@@ -197,7 +200,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
   function clean_data(x) {
     for (var key in x) {
       if (x.hasOwnProperty(key)) {
-        if(typeof x[key] === 'undefined') x[key] == "System Alert: Avoid This user";
+        if(typeof x[key] === 'undefined' || x[key] === null) x[key] = "System Alert: Avoid This user. This user has malicious intent. It would be a good idea to exit this room and join another";
         if(key == "history") {
           for(var i = 0; i < x[key].length; i++) {
             //x[key][i] = x[key][i].toString().replace(/(<([^>]+)>)/ig,"");
@@ -213,7 +216,10 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
           x[key] = x[key].replace(/(<([^>]+)>)/ig,"");
           x[key] = x[key].replace("\'","");
           x[key] = x[key].replace("\"","");
-          if(key == "username") x[key] == x[key].substring(0, 10);
+          if(key == "username") { 
+            x[key] == x[key].substring(0, 10);
+            if(x[key].replace(" ","") === "") x[key] = "Guest";
+          }
           if(key == "chatroom") x[key] == x[key].toLowerCase();
         }
       }

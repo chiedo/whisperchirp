@@ -112,6 +112,7 @@ socket.on('receive name change', function (data) {
   var user_id = data["user_id"];
   var username = data["username"];
   $(".u"+user_id+" .chat-username").text(username);
+  console.dir("receive name change");
 });
 
 socket.on('receive photo change', function (data) {
@@ -119,6 +120,7 @@ socket.on('receive photo change', function (data) {
   var user_id = data["user_id"];
   $(".u"+user_id+" .chat-userphoto").attr("src",userphoto);
   validateAllPhotos();
+  console.dir("receive photo change");
 });
 
 socket.on('receive users online pane', function (data) {
@@ -208,7 +210,6 @@ function addChatMessage(data) {
   var timestamp = data["timestamp"];
   var exp2 = /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/;
   message = message.replace(exp2,"<a href='http://$3$4$5$6$7$8' target='_blank'>$3$4$5$6$7$8</a>"); 
-  validateLastPhoto();
 
   $('#chat-messages').append("\
     <div class='chat-message-section u"+user_id+"' user_id='"+user_id+"' timestamp='"+timestamp+"'>\
@@ -222,6 +223,7 @@ function addChatMessage(data) {
     </div>\
     <div class='clear'></div>\
   ");
+  validateAllPhotos();
 
 
 }
@@ -284,16 +286,13 @@ function updateUsersOnlineNumber(x){
     $("#plural-user").removeClass("hidden");
   }
 }
-function validateLastPhoto(){
-  $("#chat-messages img").last().error(function(){
-    $(this).attr("eoa",defaultuserphoto);
-  });
-}
 function validateAllPhotos(){
   $("#chat-messages img").error(function(){
     $(this).attr("src",defaultuserphoto);
   });
-
+  $("#chat-messages img").each(function(){
+    if($(this).attr("src") === "") $(this).attr("src",defaultuserphoto);
+  });
 }
 /*
  * Handlers
@@ -374,3 +373,19 @@ $("#video-toggle").click(function(){
   location.href="/"+chatroom;
 });
 
+//This checks to see if a change needs to be made to the username.
+setInterval(function(){
+  if(wc.getCookie("userphoto") != userphoto) {
+    $.when($("#settings-userphoto").val(wc.getCookie("userphoto"))).then(wc.changePhoto());
+  }
+  if(wc.getCookie("username") != username) {
+    $.when($("#settings-username").val(wc.getCookie("username"))).then(wc.changeName());
+  }
+}, 5000);
+
+$("#settings-username,#settings-userphoto").keypress(function(event){
+  var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == '13'){
+      $("#settings-update").click();
+    }
+});
