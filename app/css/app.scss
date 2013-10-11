@@ -205,6 +205,7 @@ RESPONSIVE STYLES
 @media (max-width : $tab-width) {
   @include set-m-and-p(tab-,150);
   @include set-per-w(tab-);
+  body,.settings-panel { overflow-y: scroll; }
   .tab-block { display: block; }
   .tab-inline { display: inline-block; }
   .tab-hidden { display: none; } 
