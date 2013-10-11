@@ -260,8 +260,8 @@ $(document).ready(function(){
    * Web rtc io
    */
   var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
-  if(PeerConnection) {
-    rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
+  var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+  if(PeerConnection && is_chrome) {
 
     rtc.on('add remote stream', function(stream, socketId) {
       var new_video = newVideo(socketId);
@@ -271,7 +271,7 @@ $(document).ready(function(){
       removeVideo(data);
     });
 
-    if(join_broadcast) {
+    if(join_broadcast === true) {
       joinBroadcast();
       $("#video-toggle").removeClass("off");
     }
@@ -280,11 +280,12 @@ $(document).ready(function(){
       $("#video-toggle").addClass("off");
     }
 
+    rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
     resizeVideos();
   }
   else {
     $("#videos").html();
-    $("#videos").html("<div style='text-align: left; color: gray; font-size: 12px;'>Sorry but you must use the latest version of Google Chrome or Firefox for video chat capabilites. Feel free to enjoy text chat. And if you're using Internet Explorer, don't. :)</div>");
+    $("#videos").html("<div style='text-align: left; color: gray; font-size: 12px;'>Sorry but you must use the latest version of Google Chrome for video chat capabilites. Feel free to enjoy text chat. And if you're using Internet Explorer, don't. :)</div>");
   }
 });
 $(window).resize(function(){

@@ -84,7 +84,8 @@ a { text-decoration: none; color: inherit; }
 }
 .users-online-pane { 
   padding: 10px;
-  border-bottom: solid #B9B9C8 1px; max-height: 150px; overflow-y: scroll;
+  border: solid #B9B9C8 1px; max-height: 150px; overflow-y: auto;
+  position: fixed; right: 351px; top: 25px; width: 350px; z-index:99999; background: #ffffff; height: 100%;
 }
 .chat-user-online {
   padding-bottom: 3px;
