@@ -96,27 +96,7 @@ socket.on('receive already in this room', function (data) {
 });
 
 socket.on('receive new message', function (data) {
-  var message = data["message"];
-  var username = data["username"];
-  var userphoto = data["userphoto"];
-  var user_id = data["user_id"];
-  var timestamp = data["timestamp"];
-  var exp2 = /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/;
-  message = message.replace(exp2,"<a href='http://$3$4$5$6$7$8' target='_blank'>$3$4$5$6$7$8</a>"); 
-
-  $('#chat-messages').append("\
-    <div class='chat-message-section u"+user_id+"' user_id='"+user_id+"' timestamp='"+timestamp+"'>\
-      <div class='chat-message-picture'>\
-        <img class='chat-userphoto' src='"+userphoto+"' />\
-      </div>\
-      <div class='chat-message-text'>\
-        <div class='chat-username'>"+username+"</div>\
-        <div class='chat-message'>"+message+"</div>\
-      </div>\
-    </div>\
-    <div class='clear'></div>\
-  ");
-
+  addChatMessage(data);
   $("#chat-messages").scrollTop($("#chat-messages .chat-message-section").length * 5000);
   new_message_sound.play();
   
@@ -147,7 +127,18 @@ socket.on('give chat history', function (data) {
   var user_id = data["user_id"];
   var chatroom = data["chatroom"];
   var history = new Array();
-  history[0] = $('#chat-messages').html();
+  var count = 0;
+  
+  $("#chat-messages .chat-message-section").each(function(){
+    history[count] = {
+      "message": $(this).find(".chat-message").first().text(),
+      "username": $(this).find(".chat-username").first().text(),
+      "userphoto": $(this).find(".chat-userphoto").first().attr("src"),
+      "user_id": $(this).attr("user_id"),
+      "timestamp": $(this).attr("timestamp")
+    };
+    count++;
+  });
   // This is where I need to send the history as json. Each post as it's own number. Holding an object in each.
   socket.emit('receive chat history',{chatroom: chatroom,user_id: user_id, history: history});
 });
@@ -158,6 +149,9 @@ socket.on('receive chat history', function (data) {
   var chatroom = data["chatroom"];
   // This is where I need to import new history
   console.dir(history);
+  for(var i=0; i < history.length; i++) {
+    addChatMessage(history[i]);
+  }
   $("#chat-messages").scrollTop($("#chat-messages").height() * 2);
 
 });
@@ -190,6 +184,30 @@ function newVideo(socketId) {
 
   resizeVideos();
   return $("#remote"+socketId);
+}
+function addChatMessage(data) {
+  var message = data["message"];
+  var username = data["username"];
+  var userphoto = data["userphoto"];
+  var user_id = data["user_id"];
+  var timestamp = data["timestamp"];
+  var exp2 = /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/;
+  message = message.replace(exp2,"<a href='http://$3$4$5$6$7$8' target='_blank'>$3$4$5$6$7$8</a>"); 
+
+  $('#chat-messages').append("\
+    <div class='chat-message-section u"+user_id+"' user_id='"+user_id+"' timestamp='"+timestamp+"'>\
+      <div class='chat-message-picture'>\
+        <img class='chat-userphoto' src='"+userphoto+"' />\
+      </div>\
+      <div class='chat-message-text'>\
+        <div class='chat-username'>"+username+"</div>\
+        <div class='chat-message'>"+message+"</div>\
+      </div>\
+    </div>\
+    <div class='clear'></div>\
+  ");
+
+
 }
 
 function removeVideo(socketId) {

@@ -201,21 +201,20 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
         if(typeof x[key] === 'undefined') x[key] == "System Alert: Avoid This user";
         if(key == "history") {
           for(var i = 0; i < x[key].length; i++) {
-            // Here I actually need to make sure the format is correct. Here I need to check to see if any of the data is incorrect. If it is, send nothing
-            x[key][i] = x[key][i].toString().replace(/(<([^>]+)>)/ig,"");
+            //x[key][i] = x[key][i].toString().replace(/(<([^>]+)>)/ig,"");
             for (var subkey in x[key][i]) {
-              x[key][i][subkey] = x[key][i].toString().replace(/(<([^>]+)>)/ig,"");              
+              x[key][i][subkey] = x[key][i][subkey].toString().replace(/(<([^>]+)>)/ig,"");
+              x[key][i][subkey] = x[key][i][subkey].replace("\'","");
+              x[key][i][subkey] = x[key][i][subkey].replace("\"","");
             }
           }
         }
-        else if (typeof x[key] === 'object') {
-          x[key] = "System Alert: Avoid this user."
-        }
-        else if (typeof x[key] === 'string') {
+        else if (typeof x[key]) {
+          x[key] = x[key].toString();
           x[key] = x[key].replace(/(<([^>]+)>)/ig,"");
+          x[key] = x[key].replace("\'","");
+          x[key] = x[key].replace("\"","");
         }
-        if(key == "user_id") x[key] = parseInt(x[key]);
-        if(key == "chatroom" || key == "username" || key == "userphoto") x[key] = x[key].toString();
       }
     }
     return x;
