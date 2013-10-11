@@ -1,9 +1,3 @@
-/*
-GLOBAL VARIABLES
-*/
-wc.variablename = ""; 
-
-
 $("#settings-icon").click(function(){
   if($(this).hasClass("open")) {
     $("#settings-panel").animate({ right: "-350px"},500);
