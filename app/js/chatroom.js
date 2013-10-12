@@ -304,7 +304,8 @@ $(document).ready(function(){
    */
   var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
   var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-  if(PeerConnection && is_chrome) {
+  var chrome_ver = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
+  if(PeerConnection && is_chrome && chrome_ver >= 30) {
 
     rtc.on('add remote stream', function(stream, socketId) {
       var new_video = newVideo(socketId);
@@ -328,8 +329,9 @@ $(document).ready(function(){
   }
   else {
     $("#videos").html();
-    $("#videos").html("<div style='text-align: left; color: gray; font-size: 12px;'>Sorry but you must use the latest version of Google Chrome for video chat capabilites. Feel free to enjoy text chat. And if you're using Internet Explorer, don't. :)</div>");
+    $("#videos").html("<div style='text-align: left; color: gray; font-size: 16px;'>Sorry but you must use the latest version of Google Chrome for video chat capabilites. Feel free to enjoy text chat. And if you're using Internet Explorer, don't. :)</div>");
   }
+
 });
 $(window).resize(function(){
   resizeVideos();
@@ -365,10 +367,10 @@ $("#users-toggle").click(function(){
 });
 $("#video-toggle").click(function(){
   if($(this).hasClass("off")) {
-    wc.setCookie("join_broadcast&"+chatroom,"true",30);
+    wc.setCookie("join_broadcast&"+chatroom,"true",365);
   }
   else {
-    wc.setCookie("join_broadcast&"+chatroom,"false",30);
+    wc.setCookie("join_broadcast&"+chatroom,"false",365);
   }
   location.href="/"+chatroom;
 });
