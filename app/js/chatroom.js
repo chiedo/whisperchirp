@@ -304,9 +304,10 @@ $(document).ready(function(){
    */
   var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
   var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-  var chrome_ver = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
+  if(is_chrome) {
+    var chrome_ver = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
+  }
   if(PeerConnection && is_chrome && chrome_ver >= 30) {
-
     rtc.on('add remote stream', function(stream, socketId) {
       var new_video = newVideo(socketId);
       rtc.attachStream(stream, new_video.attr("id"));
@@ -328,6 +329,7 @@ $(document).ready(function(){
     resizeVideos();
   }
   else {
+    console.dir("not chrom");
     $("#videos").html();
     $("#videos").html("<div style='text-align: left; color: gray; font-size: 16px;'>Sorry but you must use the latest version of Google Chrome for video chat capabilites. Feel free to enjoy text chat. And if you're using Internet Explorer, don't. :)</div>");
   }
