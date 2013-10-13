@@ -1,17 +1,20 @@
 var socket = io.connect("http://"+SERVER_ADDRESS);
 var chatroom = window.location.pathname.split('/').pop().toLowerCase();
-var username;
 var useremail;
-var defaultuserphoto = "http://www.gravatar.com/avatar/none";
-var userphoto = defaultuserphoto;
-var user_id;
 var new_message_sound = new Audio("/static/mp3/new-message-sound.mp3");
 var join_broadcast = false;
 var users_online = new Array();
 var users_in_chatroom = 0;
 var chat_colors = new Array("#cc2a36","#00a0b0","#eb6841","#67204e","#4f372d");
+var is_homepage = false;
 
 
+
+// Sets cookie to determine if this is the users first time in a chatroom.
+if(!wc.getCookie("first_chatroom")){
+  wc.setCookie("first_chatroom","false",365);
+  addSystemMessage("Welcome to WhisperChirp. To start broadcasting your camera, click the camera icon above. Chirp on.");
+}
 
 // Sets cookie to determine whether or not user just watches or joins broadcast.
 if(wc.getCookie("join_broadcast&"+chatroom)) {
@@ -21,14 +24,6 @@ else {
   wc.setCookie("join_broadcast&"+chatroom,"false",365);
 }
 
-// Check if the user has an id for this room. If so assign it otherwise create it.
-if(wc.getCookie("user_id")) {
-  user_id = wc.getCookie("user_id");
-}
-else {
-  user_id = Math.floor((Math.random()*1000000000000)+1);
-  wc.setCookie("user_id",user_id,365);
-}
 
 
 //Setup style for coding messages for client
@@ -38,20 +33,6 @@ $("#settings-pane").addClass("u"+user_id);
 wc.setUserColors(user_id,"#1464a8");
 $('#dynamic-style').append(".u"+user_id+" .chat-username { color: #1464a8; }");
 
-// Check if the user has a photo for this room. If so assign it otherwise create it.
-if(wc.getCookie("userphoto")) {
-  userphoto = wc.getCookie("userphoto");
-  $("#settings-userphoto").val(userphoto);
-}
-wc.updateChatPhoto(userphoto,user_id);
-
-// Set the username or prompt for it if its needed
-if(wc.getCookie("username") === null || typeof wc.getCookie("username") === "undefined" || wc.getCookie("username") === "Guest") {
-  username = 'Guest';
-} else {
-  username = wc.getCookie("username");
-  $("#settings-username").val(username);
-}
 
 
 /*
@@ -191,16 +172,19 @@ function newVideo(socketId) {
   }
   
   if($("#videos video").length > 8) {
+    addSystemMessage("More than 8 videos at once it not recommended. You may experience slow service.");
+  }
+  resizeVideos();
+  return $("#remote"+socketId);
+}
+function addSystemMessage(message) {
     addChatMessage({
-      "message": "More than 8 videos at once it not recommended. You may experience slow service.",
+      "message": message,
       "username" : "system_messenger",
       "userphoto":"/static/img/chat-logo.png",
       "user_id": "system_messenger",
       "timestamp": new Date()
     }); 
-  }
-  resizeVideos();
-  return $("#remote"+socketId);
 }
 function addChatMessage(data) {
   var message = data["message"];

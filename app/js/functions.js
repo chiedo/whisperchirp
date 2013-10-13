@@ -98,9 +98,10 @@ var wc = {
         username = $("#settings-username").val(); 
         if(username === null || username === "") username = "Guest";
         wc.setCookie("username",username,365);
-        $(".u"+user_id+" .chat-username").text(username);
-
-        socket.emit('give name change',{username: username, user_id: user_id,chatroom:chatroom});
+        if(is_homepage !== true) {
+          $(".u"+user_id+" .chat-username").text(username);
+          socket.emit('give name change',{username: username, user_id: user_id,chatroom:chatroom});
+        }
       })(jQuery);
     },
     changePhoto: function() {
@@ -108,9 +109,12 @@ var wc = {
         userphoto = $("#settings-userphoto").val(); 
         if(userphoto === null || username==="") userphoto = defaultuserphoto;
         wc.setCookie("userphoto",userphoto,365);
-        wc.updateChatPhoto(userphoto,user_id);
-        validateAllPhotos();
-        socket.emit('give photo change',{userphoto: userphoto, user_id: user_id,chatroom: chatroom});
+
+        if(is_homepage !== true) {
+          wc.updateChatPhoto(userphoto,user_id);
+          validateAllPhotos();
+          socket.emit('give photo change',{userphoto: userphoto, user_id: user_id,chatroom: chatroom});
+        }
       })(jQuery);
     },
     updateChatPhoto: function(path,user_id) {

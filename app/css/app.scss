@@ -26,16 +26,16 @@ a { text-decoration: none; color: inherit; }
 }
 
 .settings-panel { 
-  width: 350px; background: #000000; position: fixed; right: -350px; height: 100%; z-index: 99999; font-size: 16px; font-weight: 300;
+  width: 350px; background: #000000; position: fixed; right: -350px; height: 100%; z-index: 99999; font-size: 16px; font-weight: 300; color: #ffffff;
   > .padding { padding: 20px; }
   label, input { display: block; color: #ffffff; }  
   input { border: 0; outline: 0; background: none; -webkit-appearance: none; appearance: none; -moz-appearance: none; border-bottom: 1px solid #ffffff; color: #9797A6; width: 100%; padding: 5px 0px; margin-bottom: 10px; }
   .settings-update { display: inline-block; padding: 5px 10px; color: #ffffff; background-color: #01B5AA; cursor: pointer; margin-top: 10px; }
 
   .disclaimer { color: #CCCCCC; margin-bottom: 10px; font-size: 14px; }
-  .see-disclaimer { color: #ffffff; margin-top: 10px; cursor: pointer; text-decoration: underline; font-size: 10px; display: inline-block; }
-  .suggestions { color: #ffffff; margin-top: 10px; text-decoration: underline; font-size: 10px; display: inline-block; margin-left: 10px; }
-  .info { color: #ffffff; margin-top: 10px; font-size: 10px; }
+  .see-disclaimer { color: #ffffff; margin-top: 10px; cursor: pointer; text-decoration: underline; font-size: 12px; display: inline-block; }
+  .suggestions { color: #ffffff; margin-top: 10px; text-decoration: underline; font-size: 12px; display: inline-block; margin-left: 10px; }
+  .info { color: #ffffff; margin-top: 10px; font-size: 12px; }
     .info a { color: #ffffff; text-decoration: underline; }
 }
 .settings-icon { right: 20px; height: 20px; position: absolute; right: 10px; top: 2px; cursor: pointer; }
