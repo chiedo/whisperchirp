@@ -5,6 +5,7 @@ var userphoto = defaultuserphoto;
 
 jQuery(document).ready(function() {
   (function($) {
+
     // Check if the user has an id. If so assign it otherwise create it.
     if(wc.getCookie("user_id")) {
       user_id = wc.getCookie("user_id");
@@ -43,6 +44,7 @@ jQuery(document).ready(function() {
         });
       }
     });
+
 
 
     $("#see-disclaimer").click(function(){

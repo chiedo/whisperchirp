@@ -289,10 +289,13 @@ jQuery(document).ready(function() {
        */
       var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
       var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+      var is_ios = ( navigator.userAgent.match(/(iPad|iPhone|iPod|CriOS|iOS)/g) ? true : false );
+      var is_android = ( navigator.userAgent.match(/(Android)/g) ? true : false );
+
       if(is_chrome) {
         var chrome_ver = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
       }
-      if(PeerConnection && is_chrome && chrome_ver >= 30) {
+      if(PeerConnection && is_chrome && (chrome_ver >= 30 || is_ios || is_android)) {
         rtc.on('add remote stream', function(stream, socketId) {
           var new_video = newVideo(socketId);
           rtc.attachStream(stream, new_video.attr("id"));
@@ -314,8 +317,7 @@ jQuery(document).ready(function() {
         resizeVideos();
       }
       else {
-        console.dir("not chrom");
-        $("#videos").html();
+        //$("#video-toggle").css("display","none");
         $("#videos").html("<div style='text-align: left; color: gray; font-size: 16px;'>Sorry but you must use the latest version of Google Chrome for video chat capabilites. Feel free to enjoy text chat. And if you're using Internet Explorer, don't. :)</div>");
       }
 
@@ -323,6 +325,20 @@ jQuery(document).ready(function() {
     $(window).resize(function(){
       resizeVideos();
       $("#chat-messages").css("height",$(window).height() - 145 + "px");
+
+      // All this is to ensure a smooth transition between the mobile and desktop versions
+      if($(window).width() >= 1000) {
+        // This ensures the chat is restored to normal
+        $("#chat-icon").removeClass("open");
+        $("#chat-icon").css("right","30px");
+        $("#chat-sec").css("right","0px");
+        $(".content-2").css("height","auto");
+      }else {
+        $(".content-2").css("height",$(window).height()-125+"px");
+        $("#chat-icon").css("right",$("#chat-sec").width() +10-80 + "px" );
+        $("#chat-icon").addClass("open");
+        $("#chat-sec").css("right","0px");
+      }
     });
     $("#chat-box").keypress(function(event){
       var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -377,6 +393,21 @@ jQuery(document).ready(function() {
         if(keycode == '13'){
           $("#settings-update").click();
         }
+    });
+
+    $("#chat-icon").click(function(){
+      if($(this).hasClass("open")) {
+        $("#chat-sec").animate({ right: "-100%"},500);
+        $("#chat-icon").animate({ right: "30px" },500, function(){
+          $(this).removeClass("open");
+        });
+      }
+      else {
+        $("#chat-sec").animate({ right: 0},500);
+        $("#chat-icon").animate({ right: $("#chat-sec").width() +10-80 + "px" },500,function(){
+          $(this).addClass("open");
+        });
+      }
     });
 
   })( jQuery ); // End scripts

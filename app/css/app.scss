@@ -38,7 +38,8 @@ a { text-decoration: none; color: inherit; }
   .info { color: #ffffff; margin-top: 10px; font-size: 12px; }
     .info a { color: #ffffff; text-decoration: underline; }
 }
-.settings-icon { right: 20px; height: 20px; position: absolute; right: 10px; top: 2px; cursor: pointer; }
+.settings-icon { height: 20px; position: absolute; right: 10px; top: 2px; cursor: pointer; }
+.chat-icon { right: 30px; height: 20px; position: absolute; top: 2px; cursor: pointer; }
 
 
 /*
@@ -194,13 +195,23 @@ IE
 RESPONSIVE STYLES
 */
 @media (max-width : 1000px) {
-  .content-1 .sec-1 { background: none; }
+  .chat-icon { display: inline-block; margin-right: 10px; }
+  .content-1 .sec-1 { background: none; height: auto; }
   .sec-1 { width: 100%; }
-  .content-2 .chat-sec { position: absolute; right: -10000px; }
-  .video-toggle { position: fixed; left: 0; }
-  body { overflow: hidden; }
+  .content-2 .chat-sec { position: absolute; right: -100%; width: 100%; top:0; }
+    .content-2 .chat-box-container textarea, .chat-options { width: 100%; }
+    .chat-options .users-toggle { margin-left: 60px; }
+    .content-2 .chat-messages { margin-top: 0; }
+    .chat-message-picture { width: 5%; }
+      .chat-message-picture img { width: 100%; height: auto; }
+    .chat-message-text { width: 93%; }
+  .video-toggle { position: fixed; left: 0; z-index:9999; }
+  .content-2 { overflow-x: hidden; position: relative; top: 70px; }
   .content-2 { min-width: 0; }
   .content-2 .sec { padding-right: 0; }
+  .logotext { display: none !important; }
+  .header-1 { position: fixed; width: 100%; z-index: 9999; }
+  .users-toggle img { display: none;}
 }
 @media (max-width : $tab-width) {
   @include set-m-and-p(tab-,150);
@@ -220,7 +231,6 @@ RESPONSIVE STYLES
     .chatsearch input { padding: 5px 2%; width: 85%; text-align: center; margin-bottom: 10px; }
   }
   .settings-panel { max-width: 70%; }
-  .logotext { display: none !important; }
 }
 
 @media (max-width : $mob-width) {
@@ -230,4 +240,6 @@ RESPONSIVE STYLES
   .mob-inline { display: inline-block; }
   .mob-hidden { display: none; } 
   .mob-ctr { text-align: center; } 
+  .chat-message-picture { width: 10%; }
+  .chat-message-text { width: 88%; }
 }
