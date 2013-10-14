@@ -147,138 +147,6 @@ jQuery(document).ready(function() {
     });
 
 
-    window.onbeforeunload = function() {
-      socket.onclose = function () {}; // disable onclose handler first
-      socket.close();
-    };
-
-
-
-
-    function newVideo(socketId) {
-      var new_video = "<video id='remote"+socketId+"' class='video' width='600' height='400' autoplay></video>";
-      var video_sec_width = $("#videos").width();
-      $("#videos").append(new_video);
-
-      var no_of_videos = $(".video").length;
-
-      if(no_of_videos >= 4) {
-        $(".video").attr("width","200");
-        $(".video").attr("height","150");
-      }
-      else {
-        var vid_width = video_sec_width/no_of_videos - 50;
-        $(".video").attr("width",vid_width);
-        $(".video").attr("height",(vid_width*3)/4);
-      }
-      
-      if($("#videos video").length > 8) {
-        addSystemMessage("More than 8 videos at once it not recommended. You may experience slow service.");
-      }
-      resizeVideos();
-      return $("#remote"+socketId);
-    }
-    function addSystemMessage(message) {
-        addChatMessage({
-          "message": message,
-          "username" : "system_messenger",
-          "userphoto":"/static/img/chat-logo.png",
-          "user_id": "system_messenger",
-          "timestamp": new Date()
-        }); 
-    }
-    function addChatMessage(data) {
-      var message = data["message"];
-      var username = data["username"];
-      var userphoto = data["userphoto"];
-      var user_id = data["user_id"];
-      var timestamp = data["timestamp"];
-      var exp2 = /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/;
-      message = message.replace(exp2,"<a href='http://$3$4$5$6$7$8' target='_blank'>$3$4$5$6$7$8</a>"); 
-
-      $('#chat-messages').append("\
-        <div class='chat-message-section u"+user_id+"' user_id='"+user_id+"' timestamp='"+timestamp+"'>\
-          <div class='chat-message-picture'>\
-            <img class='chat-userphoto' src='"+userphoto+"' />\
-          </div>\
-          <div class='chat-message-text'>\
-            <div class='chat-username'>"+username+"</div>\
-            <div class='chat-message'>"+message+"</div>\
-          </div>\
-        </div>\
-        <div class='clear'></div>\
-      ");
-      validateAllPhotos();
-
-
-    }
-
-    function removeVideo(socketId) {
-      var video = $('#remote' + socketId);
-      if(video.length !== 0) {
-        video.remove();
-      }
-      resizeVideos();
-    }
-
-    function joinBroadcast() {
-      $("#videos").prepend("<video id='localvideo' width='400' height='300' muted='' autoplay='' class='video'></video>");
-
-      rtc.createStream({
-        "video": true,
-        "audio": true
-      }, function(stream) {
-        $("#localvideo").attr("src", URL.createObjectURL(stream));
-        $("#localvideo").get(0).play();
-        rtc.attachStream(stream, 'localvideo');
-      });
-
-    }
-
-    function watchBroadcasts() {
-      // This tells the browser it's ready to start watching the broadcasts
-      setTimeout(function() { 
-        rtc.fire("ready");
-      },1000);
-    }
-
-    /*
-     * General Functions -- Move these to functions.js
-     */
-    function resizeVideos() {
-      var no_vids = $("#videos").find("video").length;
-      var v_w = parseInt($("#videos").width(),0)/no_vids;
-      if(v_w > 600 ) v_w = 600; 
-      if(v_w < 150 ) v_w = 150; 
-      var v_h = (v_w * 3)/4;
-
-      $("#videos video").each(function(){
-        $(this).width(v_w+"px");
-        $(this).height(v_h+"px");
-      });
-    }
-    function updateUsersOnlineNumber(x){
-      $("#users-online-number").html(x);
-      if(users_in_chatroom <= 1 ) {
-        $("#users-online-pane").addClass("hidden");
-        $("#open-arrow-uo").addClass("hidden");
-        $("#close-arrow-uo").addClass("hidden");
-        $("#plural-user").addClass("hidden");
-      }
-      else {
-        $("#open-arrow-uo").removeClass("hidden");
-        $("#close-arrow-uo").addClass("hidden");
-        $("#plural-user").removeClass("hidden");
-      }
-    }
-    function validateAllPhotos(){
-      $("#chat-messages img").error(function(){
-        $(this).attr("src",defaultuserphoto);
-      });
-      $("#chat-messages img").each(function(){
-        if($(this).attr("src") === "") $(this).attr("src",defaultuserphoto);
-      });
-    }
     /*
      * Handlers
      */
@@ -412,3 +280,136 @@ jQuery(document).ready(function() {
 
   })( jQuery ); // End scripts
 });
+
+window.onbeforeunload = function() {
+  socket.onclose = function () {}; // disable onclose handler first
+  socket.close();
+};
+
+
+
+
+function newVideo(socketId) {
+  var new_video = "<video id='remote"+socketId+"' class='video' width='600' height='400' autoplay></video>";
+  var video_sec_width = $("#videos").width();
+  $("#videos").append(new_video);
+
+  var no_of_videos = $(".video").length;
+
+  if(no_of_videos >= 4) {
+    $(".video").attr("width","200");
+    $(".video").attr("height","150");
+  }
+  else {
+    var vid_width = video_sec_width/no_of_videos - 50;
+    $(".video").attr("width",vid_width);
+    $(".video").attr("height",(vid_width*3)/4);
+  }
+  
+  if($("#videos video").length > 8) {
+    addSystemMessage("More than 8 videos at once it not recommended. You may experience slow service.");
+  }
+  resizeVideos();
+  return $("#remote"+socketId);
+}
+function addSystemMessage(message) {
+    addChatMessage({
+      "message": message,
+      "username" : "system_messenger",
+      "userphoto":"/static/img/chat-logo.png",
+      "user_id": "system_messenger",
+      "timestamp": new Date()
+    }); 
+}
+function addChatMessage(data) {
+  var message = data["message"];
+  var username = data["username"];
+  var userphoto = data["userphoto"];
+  var user_id = data["user_id"];
+  var timestamp = data["timestamp"];
+  var exp2 = /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/;
+  message = message.replace(exp2,"<a href='http://$3$4$5$6$7$8' target='_blank'>$3$4$5$6$7$8</a>"); 
+
+  $('#chat-messages').append("\
+    <div class='chat-message-section u"+user_id+"' user_id='"+user_id+"' timestamp='"+timestamp+"'>\
+      <div class='chat-message-picture'>\
+        <img class='chat-userphoto' src='"+userphoto+"' />\
+      </div>\
+      <div class='chat-message-text'>\
+        <div class='chat-username'>"+username+"</div>\
+        <div class='chat-message'>"+message+"</div>\
+      </div>\
+    </div>\
+    <div class='clear'></div>\
+  ");
+  validateAllPhotos();
+
+
+}
+
+function removeVideo(socketId) {
+  var video = $('#remote' + socketId);
+  if(video.length !== 0) {
+    video.remove();
+  }
+  resizeVideos();
+}
+
+function joinBroadcast() {
+  $("#videos").prepend("<video id='localvideo' width='400' height='300' muted='' autoplay='' class='video'></video>");
+
+  rtc.createStream({
+    "video": true,
+    "audio": true
+  }, function(stream) {
+    $("#localvideo").attr("src", URL.createObjectURL(stream));
+    $("#localvideo").get(0).play();
+    rtc.attachStream(stream, 'localvideo');
+  });
+
+}
+
+function watchBroadcasts() {
+  // This tells the browser it's ready to start watching the broadcasts
+  setTimeout(function() { 
+    rtc.fire("ready");
+  },1000);
+}
+
+/*
+ * General Functions -- Move these to functions.js
+ */
+function resizeVideos() {
+  var no_vids = $("#videos").find("video").length;
+  var v_w = parseInt($("#videos").width(),0)/no_vids;
+  if(v_w > 600 ) v_w = 600; 
+  if(v_w < 150 ) v_w = 150; 
+  var v_h = (v_w * 3)/4;
+
+  $("#videos video").each(function(){
+    $(this).width(v_w+"px");
+    $(this).height(v_h+"px");
+  });
+}
+function updateUsersOnlineNumber(x){
+  $("#users-online-number").html(x);
+  if(users_in_chatroom <= 1 ) {
+    $("#users-online-pane").addClass("hidden");
+    $("#open-arrow-uo").addClass("hidden");
+    $("#close-arrow-uo").addClass("hidden");
+    $("#plural-user").addClass("hidden");
+  }
+  else {
+    $("#open-arrow-uo").removeClass("hidden");
+    $("#close-arrow-uo").addClass("hidden");
+    $("#plural-user").removeClass("hidden");
+  }
+}
+function validateAllPhotos(){
+  $("#chat-messages img").error(function(){
+    $(this).attr("src",defaultuserphoto);
+  });
+  $("#chat-messages img").each(function(){
+    if($(this).attr("src") === "") $(this).attr("src",defaultuserphoto);
+  });
+}
