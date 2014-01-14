@@ -2,6 +2,7 @@
 
 ### Step 1
 Create app/js/vars.js and insert SERVER_ADDRESS with the IP of your computer
+
     var SERVER_ADDRESS = "XXX.XXX.XXX.XXX";
 
 ### Step 2
@@ -16,6 +17,7 @@ Create server/app.js and insert following content, substituting XXXXX for desire
 
 ### Step 3
 Install all dependencies
+
     npm install
 
 ### Step 4
