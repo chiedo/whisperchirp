@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "description": "A url based chatroom.",
   "keywords": [],
-  "homepage": "http://chie.do",
+  "homepage": "http://labs.chie.do",
   "repository": {
     "type": "git",
     "url": "git://github.com/chiedojohn/WhisperChirp.git"
   },
   "author": "Chiedo Labs",
   "contributors": [
-    "Chiedo John <cj@chiedojohn.com"
+    "Chiedo John"
   ],
   "main": "scripts/server.js",
   "scripts": {
@@ -23,13 +23,15 @@
     "testacular": "*",
     "jade": "0.35.0",
     "socket.io": "*",
-    "webrtc.io" : "*",
-    "webrtc.io-client" : "*",
-    "forever" : "*",
+    "webrtc.io": "*",
+    "webrtc.io-client": "*",
+    "forever": "*",
     "ws": "*"
   },
   "engines": {
     "node": ">= 0.8.4"
   },
-  "license": "None"
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "1148bf6e96a374507839e6042ddafb73d438baa0"
 }
