@@ -1,4 +1,4 @@
-var PORT = process.env.PORT || process.argv[2] && parseInt(process.argv[2], 10) || 5000; 
+var PORT = process.env.PORT || 5000; 
 var STATIC_DIR = __dirname + '/../app'; 
 var TEST_DIR = __dirname + '/../test'; 
 

@@ -9,7 +9,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
   var io = require('socket.io').listen(server);
   var webRTC = require('webrtc.io').listen(server2);
 
-  var users_online = new Array();
+  var users_online = [];
 
   app.set('views', STATIC_DIR + '/views');
   app.set('view engine', 'jade');
@@ -19,7 +19,7 @@ exports.start = function(PORT, STATIC_DIR, TEST_DIR) {
   app.use('/static',express.static(STATIC_DIR));
   
   server.listen(PORT);
-  server2.listen(4000);
+  server2.listen(PORT);
 
   app.get('/', function (req, res) {
     res.render('index',

@@ -183,7 +183,8 @@ jQuery(document).ready(function() {
         }
 
         //rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
-        rtc.connect("ws://whisperchirp.herokuapp.com", chatroom);
+        var host = location.origin.replace(/^http/, 'ws');
+        rtc.connect(host, chatroom);
         resizeVideos();
       }
       else {
