@@ -1,9 +1,10 @@
-var socket = io.connect("http://"+SERVER_ADDRESS);
+//var socket = io.connect("http://"+SERVER_ADDRESS);
+var socket = io.connect("http://whisperchirp.herokuapp.com/");
 var chatroom = window.location.pathname.split('/').pop().toLowerCase();
 var useremail;
 var new_message_sound = new Audio("/static/mp3/new-message-sound.mp3");
 var join_broadcast = false;
-var users_online = new Array();
+var users_online = [];
 var users_in_chatroom = 0;
 var chat_colors = new Array("#cc2a36","#00a0b0","#eb6841","#67204e","#4f372d");
 var is_homepage = false;
