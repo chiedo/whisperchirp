@@ -182,7 +182,8 @@ jQuery(document).ready(function() {
           $("#video-toggle").addClass("off");
         }
 
-        rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
+        //rtc.connect("ws://"+SERVER_ADDRESS+":4000", chatroom);
+        rtc.connect("ws://whisperchirp.herokuapp.com", chatroom);
         resizeVideos();
       }
       else {
